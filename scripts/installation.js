@@ -16,7 +16,7 @@ export async function openInstallDialog(actor, implant) {
   }
 
   const will = getWillValue(actor);
-  let rolledCost      = null;
+  let rolledCost       = null;
   let adaptationResult = null;
 
   const content = `
@@ -63,21 +63,24 @@ export async function openInstallDialog(actor, implant) {
     </div>`;
 
   new Dialog({
-    title: `${game.i18n.localize("CYBERWARE.Install")}: ${implant.name}`,
+    title:   `${game.i18n.localize("CYBERWARE.Install")}: ${implant.name}`,
     content,
     buttons: {
       apply: {
         icon:  '<i class="fas fa-check"></i>',
         label: game.i18n.localize("CYBERWARE.ApplyInstallation"),
-        callback: async (html) => {
+        callback: async () => {
           if (!rolledCost || !adaptationResult) {
             ui.notifications.warn(game.i18n.localize("CYBERWARE.RollFirst"));
             return false;
           }
 
+          // Re-read humanity at confirm time to get the freshest values
+          const liveHumanity = getActorHumanity(actor) ?? humanity;
+
           const confirmed = await Dialog.confirm({
             title:   game.i18n.localize("CYBERWARE.ConfirmInstall"),
-            content: buildConfirmContent(actor, humanity, rolledCost, adaptationResult)
+            content: buildConfirmContent(actor, liveHumanity, rolledCost, adaptationResult)
           });
           if (!confirmed) return false;
 
@@ -90,14 +93,22 @@ export async function openInstallDialog(actor, implant) {
       }
     },
     default: "apply",
-    render: (html) => {
-      wireInstallHandlers(html, actor, implant, cyberData, will, humanity,
-        (cost)  => { rolledCost       = cost;    refreshFinalPreview(html, humanity, rolledCost, adaptationResult); },
-        (adapt) => { adaptationResult = adapt;   refreshFinalPreview(html, humanity, rolledCost, adaptationResult); }
+    render:  (html) => {
+      wireInstallHandlers(html, actor, implant, cyberData, will,
+        (cost)  => {
+          rolledCost       = cost;
+          refreshFinalPreview(html, getActorHumanity(actor) ?? humanity, rolledCost, adaptationResult);
+        },
+        (adapt) => {
+          adaptationResult = adapt;
+          refreshFinalPreview(html, getActorHumanity(actor) ?? humanity, rolledCost, adaptationResult);
+        }
       );
     }
   }).render(true);
 }
+
+// ── Helpers ──────────────────────────────────────────────────────────────────
 
 function buildConfirmContent(actor, humanity, cost, adaptation) {
   const actualCost = resolveActualCost(cost, adaptation);
@@ -145,13 +156,13 @@ function resolveActualCost(cost, adaptation) {
   return cost.total;
 }
 
-function wireInstallHandlers(html, actor, implant, cyberData, will, humanity, onCostRolled, onAdaptRolled) {
+function wireInstallHandlers(html, actor, implant, cyberData, will, onCostRolled, onAdaptRolled) {
   html.find(".btn-roll-cost").on("click", async (e) => {
     e.preventDefault();
     const roll = await new Roll(cyberData.humanityCostDice).evaluate();
 
-    // Derive min/max possible from the roll terms
-    const diceTerms  = roll.terms.filter(t => t.constructor.name === "Die");
+    // Derive min/max from Die terms so critical outcomes can use them
+    const diceTerms   = roll.terms.filter(t => t.constructor.name === "Die");
     const minPossible = roll.total - diceTerms.reduce((s, d) => s + (d.total - d.number), 0);
     const maxPossible = roll.total + diceTerms.reduce((s, d) => s + (d.number * d.faces - d.total), 0);
 

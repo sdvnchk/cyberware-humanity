@@ -149,3 +149,24 @@
   0%, 100% { opacity: 1;   }
   50%       { opacity: 0.5; }
 }
+
+/* ── GURPS Classic GCS sheet context ─────────────────────────────────────── */
+/* Placed after #hp-fp inside the #stats column — match the column width. */
+#stats > .humanity-track {
+  margin-top: 6px;
+}
+
+/* ── GURPS Modern sheet context ──────────────────────────────────────────── */
+/* Placed after .ms-secondary-stats in the ms-header — span full header width. */
+.ms-header + .humanity-track,
+.ms-secondary-stats + .humanity-track {
+  margin-top:   6px;
+  margin-bottom: 0;
+  width:        100%;
+  box-sizing:   border-box;
+}
+
+/* When inside the Modern sheet header, tighten vertical padding slightly. */
+.modern-sheet .humanity-track {
+  padding: 6px 10px;
+}

@@ -1,4 +1,4 @@
-import { MODULE_ID, THRESHOLDS, WILL_DATA_PATHS } from "./config.js";
+import { MODULE_ID, THRESHOLDS, WILL_DATA_PATHS, CRAFT_QUALITY } from "./config.js";
 
 export function getActorHumanity(actor) {
   return actor.flags?.[MODULE_ID]?.humanity ?? null;
@@ -46,13 +46,12 @@ export async function ensureHumanityFlags(actor) {
     [`flags.${MODULE_ID}.humanity`]: {
       base,
       currentMax: base,
-      current: base
+      current:    base
     }
   });
   return true;
 }
 
 export function formatQualityLabel(quality) {
-  const { CRAFT_QUALITY } = window._cyberwareConfig ?? {};
-  return CRAFT_QUALITY?.[quality]?.label ?? quality;
+  return CRAFT_QUALITY[quality]?.label ?? quality;
 }

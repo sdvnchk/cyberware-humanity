@@ -1,18 +1,18 @@
 import { MODULE_ID } from "./config.js";
 import {
-  getActorHumanity, getHumanityBase,
+  getActorHumanity,
   getThresholdForValue, getThresholdData,
   ensureHumanityFlags
 } from "./utils.js";
-import { openInstallDialog }   from "./installation.js";
-import { openCyberwareConfig } from "./cyberware.js";
+import { openInstallDialog }      from "./installation.js";
+import { openCyberwareConfig }    from "./cyberware.js";
 import { checkThresholdCrossing } from "./thresholds.js";
 
 // ── Hook registration ────────────────────────────────────────────────────────
 
 export function registerCharacterSheetHooks() {
   Hooks.on("renderActorSheet", onRenderActorSheet);
-  Hooks.on("updateActor",      onUpdateActorForThreshold);
+  // NOTE: updateActor is handled solely in main.js to avoid duplicate notifications.
 }
 
 // ── Sheet render hook ────────────────────────────────────────────────────────
@@ -49,31 +49,42 @@ function injectHumanityTrack(html, actor, humanity) {
 
   const trackHtml = buildTrackHtml({ current, currentMax, base, pct, maxPct, threshKey, color, actorId: actor.id, canEdit: actor.isOwner });
 
-  // Ordered list of candidate insertion points within the GURPS character sheet
-  const candidates = [
-    ".resource-list",
-    ".attributes .resources",
-    ".secondary-attributes",
-    ".char-resources",
-    ".char-stats",
-    ".basic-attributes",
-    ".sheet-sidebar",
-    ".attributes",
-    "form.gurps-sheet"
-  ];
-
+  // Inject into the correct position depending on which GURPS sheet is rendering.
+  //
+  // Classic GCS sheet (GurpsActorSheet):
+  //   #stats > #hp-fp  — place the track immediately after the HP/FP block.
+  //   #stats           — fallback: append at the end of the stats column.
+  //
+  // Modern sheet (GurpsActorModernSheet, classes include "modern-sheet"):
+  //   .ms-secondary-stats — append after the secondary-stats panel in the header.
+  //   .ms-resources       — fallback: append inside the resources block.
   let inserted = false;
-  for (const sel of candidates) {
-    const target = html.find(sel).first();
-    if (target.length) {
-      target.append(trackHtml);
-      inserted = true;
-      break;
+
+  const isModern = html.find(".modern-sheet").length > 0;
+
+  if (isModern) {
+    // Modern sheet — place below the secondary-stats panel (ST/DX/IQ/HT block)
+    const secStats = html.find(".ms-secondary-stats").first();
+    if (secStats.length) { secStats.after(trackHtml); inserted = true; }
+
+    if (!inserted) {
+      const res = html.find(".ms-resources").first();
+      if (res.length) { res.append(trackHtml); inserted = true; }
+    }
+  } else {
+    // Classic GCS sheet — place immediately after the HP/FP block inside #stats
+    const hpfp = html.find("#hp-fp").first();
+    if (hpfp.length) { hpfp.after(trackHtml); inserted = true; }
+
+    if (!inserted) {
+      const stats = html.find("#stats").first();
+      if (stats.length) { stats.append(trackHtml); inserted = true; }
     }
   }
 
+  // Last-resort fallback for unknown sheet layouts
   if (!inserted) {
-    html.find(".sheet-body, .window-content").first().prepend(trackHtml);
+    html.find(".sheet-body, .window-content, form").first().prepend(trackHtml);
   }
 
   // Apply CSS custom property for dynamic colouring
@@ -181,21 +192,6 @@ function wireTrackEvents(html, actor) {
       await actor.update({ [input.name]: Math.max(0, value) });
     }
   });
-}
-
-// ── Actor update hook (threshold detection) ──────────────────────────────────
-
-function onUpdateActorForThreshold(actor, change) {
-  const humanityChange = change.flags?.[MODULE_ID]?.humanity;
-  if (!humanityChange) return;
-
-  const newCurrent = humanityChange.current;
-  if (newCurrent === undefined) return;
-
-  const oldCurrent = actor._source?.flags?.[MODULE_ID]?.humanity?.current;
-  if (oldCurrent === undefined || oldCurrent === newCurrent) return;
-
-  checkThresholdCrossing(actor, oldCurrent, newCurrent);
 }
 
 // ── Humanity Manager dialog ──────────────────────────────────────────────────

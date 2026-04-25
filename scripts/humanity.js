@@ -1,5 +1,5 @@
 import { MODULE_ID } from "./config.js";
-import { getActorHumanity, getWillValue, gmUserIds } from "./utils.js";
+import { getActorHumanity, gmUserIds } from "./utils.js";
 
 export function calculateInstallCost(rollTotal) {
   const hard   = Math.ceil(rollTotal * 0.20);
@@ -67,7 +67,3 @@ export async function applyInstallation(actor, implant, cost, adaptation) {
   );
 }
 
-export function recalcBaseHumanity(actor) {
-  const base = getWillValue(actor) * 5;
-  return base;
-}

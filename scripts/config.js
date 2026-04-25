@@ -98,11 +98,13 @@ export const DEFAULT_CYBER_DATA = {
   installed: false
 };
 
-// GURPS system data paths to try when reading Will
+// GURPS system data paths to try when reading Will.
+// crnormand/gurps stores primary attributes under system.attributes.WILL (uppercase).
 export const WILL_DATA_PATHS = [
-  "system.attributes.will.value",
-  "system.basicattributes.will.value",
+  "system.attributes.WILL.value",   // crnormand/gurps (canonical)
+  "system.attributes.will.value",   // alternative capitalisation
   "system.will.value",
   "system.will",
-  "system.IQ.value"  // fallback to IQ if will not found
+  "system.attributes.IQ.value",     // IQ as last resort
+  "system.attributes.iq.value"
 ];
