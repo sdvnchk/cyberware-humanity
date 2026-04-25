@@ -32,9 +32,10 @@ export async function applyInstallation(actor, implant, cost, adaptation) {
   });
 
   await implant.update({
-    [`flags.${MODULE_ID}.cyberData.installed`]:      true,
-    [`flags.${MODULE_ID}.cyberData.installDate`]:    new Date().toISOString(),
-    [`flags.${MODULE_ID}.cyberData.adaptationRoll`]: adaptation.roll
+    [`flags.${MODULE_ID}.cyberData.installed`]:               true,
+    [`flags.${MODULE_ID}.cyberData.installDate`]:             new Date().toISOString(),
+    [`flags.${MODULE_ID}.cyberData.adaptationRoll`]:          adaptation.roll,
+    [`flags.${MODULE_ID}.cyberData.installData.hardCostPaid`]: hardCost
   });
 
   if (adaptation.outcome === "failure" || adaptation.outcome === "critical_failure") {
@@ -67,3 +68,35 @@ export async function applyInstallation(actor, implant, cost, adaptation) {
   );
 }
 
+export async function uninstallImplant(actor, implant, restoreHardCost = true) {
+  const humanity  = getActorHumanity(actor);
+  if (!humanity) return;
+
+  const cyberData    = implant.flags?.[MODULE_ID]?.cyberData;
+  if (!cyberData?.installed) {
+    ui.notifications.warn(game.i18n.localize("CYBERWARE.NotInstalled"));
+    return;
+  }
+
+  const hardCostPaid = cyberData.installData?.hardCostPaid ?? 0;
+
+  await implant.update({
+    [`flags.${MODULE_ID}.cyberData.installed`]:      false,
+    [`flags.${MODULE_ID}.cyberData.installDate`]:    null,
+    [`flags.${MODULE_ID}.cyberData.adaptationRoll`]: null
+  });
+
+  if (restoreHardCost && hardCostPaid > 0) {
+    const newMax = Math.min(humanity.base, humanity.currentMax + hardCostPaid);
+    await actor.update({
+      [`flags.${MODULE_ID}.humanity.currentMax`]: newMax
+    });
+    ui.notifications.info(
+      game.i18n.format("CYBERWARE.UninstallRestored", { name: implant.name, hard: hardCostPaid })
+    );
+  } else {
+    ui.notifications.info(
+      game.i18n.format("CYBERWARE.UninstallSuccess", { name: implant.name })
+    );
+  }
+}

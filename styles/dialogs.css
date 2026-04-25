@@ -279,6 +279,212 @@
   font-size:  12px;
 }
 
-/* ── Mark-as-cyberware header button ────────────────────────────────────── */
-.mark-cyberware-btn.active i { color: var(--cyber-green, #00ff9f); }
+/* ── Mark / Unmark header buttons ───────────────────────────────────────── */
+.mark-cyberware-btn.active i    { color: var(--cyber-green, #00ff9f); }
 .mark-cyberware-btn:not(.active) i { color: var(--cyber-blue, #00c8ff); }
+.unmark-cyberware-btn i         { color: var(--cyber-red, #ff0040); }
+
+/* ── Recovery buttons in the manager ────────────────────────────────────── */
+.manager-recovery-row {
+  display:   flex;
+  gap:       8px;
+  margin-top: 10px;
+}
+
+.btn-recovery {
+  flex:          1;
+  background:    var(--cyber-blue-dim, rgba(0,200,255,0.12));
+  border:        1px solid var(--cyber-border, rgba(0,200,255,0.4));
+  border-radius: 3px;
+  color:         var(--cyber-blue, #00c8ff);
+  cursor:        pointer;
+  font-family:   inherit;
+  font-size:     11px;
+  font-weight:   700;
+  padding:       5px 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  transition:    background 0.2s;
+}
+.btn-recovery:hover   { background: rgba(0,200,255,0.25); }
+.btn-recovery.btn-heroism {
+  border-color: var(--cyber-red, #ff0040);
+  color:        var(--cyber-red, #ff0040);
+  background:   rgba(255,0,64,0.08);
+}
+.btn-recovery.btn-heroism:hover { background: rgba(255,0,64,0.2); }
+
+/* ── Temporary Traits section ────────────────────────────────────────────── */
+.temp-traits-section {
+  border:        1px solid var(--cyber-border, rgba(0,200,255,0.25));
+  border-radius: 4px;
+  padding:       8px 12px;
+}
+
+.section-header {
+  display:     flex;
+  align-items: center;
+  gap:         6px;
+  margin-bottom: 6px;
+}
+
+.section-header h3 { margin: 0; flex: 1; }
+
+.btn-add-temp-trait {
+  background:    var(--cyber-blue-dim, rgba(0,200,255,0.12));
+  border:        1px solid var(--cyber-border, rgba(0,200,255,0.4));
+  border-radius: 3px;
+  color:         var(--cyber-blue, #00c8ff);
+  cursor:        pointer;
+  font-size:     12px;
+  padding:       2px 7px;
+  line-height:   1.4;
+  transition:    background 0.15s;
+}
+.btn-add-temp-trait:hover { background: rgba(0,200,255,0.25); }
+
+.temp-traits-list { display: flex; flex-direction: column; gap: 3px; }
+
+.temp-trait-row {
+  display:     flex;
+  align-items: center;
+  gap:         6px;
+  padding:     3px 4px;
+  border-radius: 3px;
+  background:  rgba(0,0,0,0.15);
+  font-size:   12px;
+}
+.temp-trait-row.expired { opacity: 0.55; }
+
+.trait-days {
+  min-width:  38px;
+  text-align: center;
+  font-weight: 700;
+  font-size:  11px;
+  color:      var(--cyber-yellow, #ffed4e);
+  background: rgba(255,237,78,0.1);
+  border:     1px solid rgba(255,237,78,0.3);
+  border-radius: 3px;
+  padding:    1px 4px;
+  flex-shrink: 0;
+}
+.trait-days.expired {
+  color:      var(--cyber-red, #ff0040);
+  background: rgba(255,0,64,0.1);
+  border-color: rgba(255,0,64,0.3);
+}
+.trait-perm {
+  min-width:  38px;
+  text-align: center;
+  font-size:  10px;
+  font-weight: 700;
+  color:      var(--cyber-blue, #00c8ff);
+  background: rgba(0,200,255,0.08);
+  border:     1px solid rgba(0,200,255,0.3);
+  border-radius: 3px;
+  padding:    1px 4px;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.trait-name  { flex: 1; font-size: 12px; }
+.trait-actions {
+  display:  flex;
+  gap:      3px;
+  flex-shrink: 0;
+}
+.trait-actions button {
+  background:    transparent;
+  border:        1px solid rgba(0,200,255,0.3);
+  border-radius: 2px;
+  color:         rgba(0,200,255,0.6);
+  cursor:        pointer;
+  font-size:     10px;
+  padding:       1px 5px;
+  transition:    all 0.15s;
+}
+.trait-actions button:hover {
+  border-color: var(--cyber-blue, #00c8ff);
+  color:        var(--cyber-blue, #00c8ff);
+  background:   rgba(0,200,255,0.1);
+}
+.trait-actions .btn-remove-trait:hover {
+  border-color: var(--cyber-red, #ff0040);
+  color:        var(--cyber-red, #ff0040);
+  background:   rgba(255,0,64,0.1);
+}
+
+.no-temp-traits {
+  text-align: center;
+  padding:    8px;
+  opacity:    0.5;
+  font-size:  11px;
+}
+
+/* ── Temp trait form ─────────────────────────────────────────────────────── */
+.temp-trait-form .form-group {
+  display:       flex;
+  flex-direction: column;
+  gap:           3px;
+  margin-bottom: 8px;
+}
+.temp-trait-form label {
+  font-size:  11px;
+  font-weight: 700;
+  color:      var(--cyber-blue, #00c8ff);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.temp-trait-form input[type="text"],
+.temp-trait-form input[type="number"] {
+  background:   rgba(0,0,0,0.4);
+  border:       1px solid var(--cyber-border, rgba(0,200,255,0.4));
+  border-radius: 3px;
+  color:        #fff;
+  padding:      4px 6px;
+  font-family:  inherit;
+  font-size:    13px;
+}
+.temp-trait-form input:focus {
+  outline:      none;
+  border-color: var(--cyber-blue, #00c8ff);
+}
+.temp-trait-days-row {
+  display:     flex;
+  align-items: center;
+  gap:         10px;
+}
+.temp-trait-days-row .days-input { width: 80px; }
+.perm-checkbox {
+  display:     flex;
+  align-items: center;
+  gap:         5px;
+  font-size:   11px;
+  font-weight: normal;
+  color:       var(--cyber-text, #c8e8ff);
+  text-transform: none;
+  letter-spacing: 0;
+  cursor:      pointer;
+}
+
+/* ── Uninstall dialog ────────────────────────────────────────────────────── */
+.uninstall-dialog .restore-hint {
+  font-size: 12px;
+  opacity:   0.75;
+  margin-top: 6px;
+  color:     var(--cyber-green, #00ff9f);
+}
+
+/* ── Temp-trait sheet button ─────────────────────────────────────────────── */
+.btn-temp-trait-toggle {
+  background:    transparent;
+  border:        none;
+  cursor:        pointer;
+  color:         rgba(0,200,255,0.4);
+  font-size:     11px;
+  padding:       0 3px;
+  line-height:   1;
+  transition:    color 0.15s;
+}
+.btn-temp-trait-toggle:hover,
+.btn-temp-trait-toggle.is-temp { color: var(--cyber-yellow, #ffed4e); }

@@ -98,6 +98,13 @@ export const DEFAULT_CYBER_DATA = {
   installed: false
 };
 
+export const PERMISSION_LEVELS = {
+  1: "CYBERWARE.Settings.RolePlayer",
+  2: "CYBERWARE.Settings.RoleTrusted",
+  3: "CYBERWARE.Settings.RoleAssistant",
+  4: "CYBERWARE.Settings.RoleGamemaster"
+};
+
 // GURPS system data paths to try when reading Will.
 // crnormand/gurps stores primary attributes under system.attributes.WILL (uppercase).
 export const WILL_DATA_PATHS = [

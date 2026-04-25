@@ -2,7 +2,7 @@
   "id": "cyberware-humanity",
   "title": "Cyberware & Humanity Manager",
   "description": "GURPS Cyberpunk module for managing cyberware installation and humanity degradation. Provides calculation tools and GM notifications without forcing automation.",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "authors": [
     {
       "name": "Ogorodnik"
