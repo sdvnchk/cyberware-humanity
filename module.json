@@ -33,6 +33,29 @@
       "path": "lang/ru.json"
     }
   ],
+  "relationships": {
+    "systems": [
+      {
+        "id": "gurps",
+        "type": "system",
+        "compatibility": {
+          "minimum": "0.17"
+        }
+      }
+    ],
+    "recommends": [
+      {
+        "id": "calendaria",
+        "type": "module",
+        "reason": "Enables automatic countdown of temporary traits assigned after failed cyberware adaptation checks. Without it, trait durations must be tracked manually."
+      },
+      {
+        "id": "foundryvtt-simple-calendar",
+        "type": "module",
+        "reason": "Alternative to Calendaria. If Simple Calendar is installed and its integration setting is enabled, temporary trait durations will be tracked automatically as in-game days pass."
+      }
+    ]
+  },
   "system": ["gurps"],
   "url": "https://github.com/sdvnchk/gurps-humanity",
   "manifest": "https://raw.githubusercontent.com/sdvnchk/gurps-humanity/main/module.json",
