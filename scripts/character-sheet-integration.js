@@ -190,9 +190,9 @@ function injectTempTraitButtons(html, actor) {
       // Avoid double-injection if sheet re-renders partially
       if (row.find(".btn-temp-trait-toggle").length) return;
 
-      // Best-effort: grab name from the first text-bearing child
-      const nameEl  = row.find(".item-name, .adv-name, .name, span").first();
-      const rawName = (nameEl.text() || row.text()).trim().replace(/\s+/g, " ");
+      // Grab name from the first text-bearing child only; skip rows with no clear name.
+      const nameEl  = row.find(".item-name, .adv-name, .name").first();
+      const rawName = nameEl.text().trim().replace(/\s+/g, " ");
       if (!rawName) return;
 
       const existingTrait = traits.find(t => t.name === rawName);
@@ -206,7 +206,7 @@ function injectTempTraitButtons(html, actor) {
                 type="button"
                 title="${title}"
                 data-trait-name="${rawName.replace(/"/g, "&quot;")}">
-          <i class="fas ${isTemp ? "fa-clock" : "fa-clock"}" style="opacity:${isTemp ? 1 : 0.3}"></i>
+          <i class="fas ${isTemp ? "fa-clock" : "fa-plus-circle"}"></i>
         </button>`);
 
       row.append(btn);
@@ -217,10 +217,8 @@ function injectTempTraitButtons(html, actor) {
         if (existingTrait) {
           openEditTempTraitDialog(actor, existingTrait, _refreshManager);
         } else {
-          openAddTempTraitDialog(actor, rawName, () => {
-            _refreshManager();
-            injectTempTraitButtons(html, game.actors.get(actor.id));
-          });
+          // Sheet re-renders automatically when actor data changes, so no manual re-inject needed.
+          openAddTempTraitDialog(actor, rawName, _refreshManager);
         }
       });
     });

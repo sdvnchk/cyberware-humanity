@@ -1,186 +1,230 @@
 # Cyberware & Humanity Manager
 
-**Foundry VTT module for GURPS 4e Cyberpunk campaigns.**
+**Модуль Foundry VTT для кампаний в стиле Cyberpunk на системе GURPS 4e.**
 
-Tracks the three-value Humanity system (Base / Max / Current), provides a step-by-step cyberware installation workflow with dice rolls, and notifies the GM when a character crosses a degradation threshold — all without forcing automation. The GM and players stay in control; the module handles the math and the reminders.
+Отслеживает трёхзначную систему Человечности (База / Максимум / Текущее), предоставляет пошаговый процесс установки кибернетики с бросками кубиков и уведомляет Мастера о пересечении порогов деградации — без принуждения к автоматизации. Мастер и игроки сохраняют полный контроль, модуль берёт на себя математику и напоминания.
 
 ---
 
-## Requirements
+## Требования
 
-| Dependency | Required | Notes |
+| Зависимость | Обязательна | Примечания |
 |---|---|---|
-| Foundry VTT | v12+ | Verified on v13 |
-| GURPS 4e system (`gurps`) | ✅ Required | v0.17+ (crnormand/gurps) |
-| Calendaria | ☐ Optional | Auto-counts down temporary trait durations |
-| Simple Calendar | ☐ Optional | Alternative to Calendaria for the same feature |
+| Foundry VTT | v12+ | Проверено на v13 |
+| Система GURPS 4e (`gurps`) | ✅ Обязательна | v0.17+ (crnormand/gurps) |
+| Calendaria | ☐ Опционально | Автоматический обратный отсчёт временных черт |
+| Simple Calendar | ☐ Опционально | Альтернатива Calendaria |
 
 ---
 
-## Installation
+## Установка
 
-**Method 1 — Manifest URL** (recommended)
+**Способ 1 — URL манифеста** (рекомендуется)
 
-In Foundry → *Add-on Modules* → *Install Module*, paste:
+В Foundry → *Add-on Modules* → *Install Module* вставьте:
 ```
 https://raw.githubusercontent.com/sdvnchk/gurps-humanity/main/module.json
 ```
 
-**Method 2 — Manual**
+**Способ 2 — Вручную**
 
-Download the latest `module.zip` from [Releases](https://github.com/sdvnchk/gurps-humanity/releases), extract into your `Data/modules/cyberware-humanity/` folder, and restart Foundry.
+Скачайте последний `module.zip` из [Releases](https://github.com/sdvnchk/gurps-humanity/releases), распакуйте в папку `Data/modules/cyberware-humanity/` и перезапустите Foundry.
 
 ---
 
-## Module settings
+## Настройки модуля
 
-Open *Game Settings → Module Settings → Cyberware & Humanity Manager*:
+Откройте *Настройки игры → Настройки модулей → Cyberware & Humanity Manager*:
 
-| Setting | Default | Description |
+| Настройка | По умолчанию | Описание |
 |---|---|---|
-| Auto-Initialize Humanity | ON | Creates Humanity flags (Will × 5) automatically when a character sheet is first opened |
-| Enable Calendar Integration | OFF | Tracks temporary-trait countdowns via Calendaria or Simple Calendar |
+| Автоинициализация Человечности | ВКЛ | Автоматически создаёт флаги Человечности (Воля × 5) при первом открытии листа персонажа |
+| Интеграция с календарём | ВЫКЛ | Отслеживает обратный отсчёт временных черт через Calendaria или Simple Calendar |
+| Уведомлять игрока о пороге | ВЫКЛ | Отправляет уведомление о пересечении порога не только Мастеру, но и владельцу персонажа |
+| Публичные уведомления о пороге | ВЫКЛ | Показывает уведомления о пороге всем (вместо шёпота Мастеру) |
+
+### Права доступа
+
+| Настройка | По умолчанию | Описание |
+|---|---|---|
+| Кто может маркировать кибернетику | Мастер | Минимальная роль для кнопки «Отметить как кибернетику» |
+| Кто может настраивать кибернетику | Мастер | Минимальная роль для диалога конфигурации |
+| Кто может устанавливать импланты | Мастер | Минимальная роль для диалога установки |
+| Кто может редактировать Человечность | Ассистент | Минимальная роль для ручного ввода значений |
 
 ---
 
-## For Players
+## Для игроков
 
-### Understanding your three Humanity values
+### Три значения Человечности
 
-Your character sheet gets a **HUMANITY** widget injected below the HP/FP block:
+На листе персонажа появляется виджет **ЧЕЛОВЕЧНОСТЬ** ниже блока ОЗ/ОС:
 
 ```
-HUMANITY            ⚙
+ЧЕЛОВЕЧНОСТЬ        ⚙
   36  /  48  /  50
   ████████░░░░░░░░
-  ⚠️ Detachment
+  ⚠️ Отстранённость
 ```
 
-| Value | What it is |
+| Значение | Что это |
 |---|---|
-| **Current** (left) | Your Humanity right now |
-| **Current Max** (middle) | Maximum your Humanity can recover to; reduced permanently by cyberware |
-| **Base** (right, read-only) | Will × 5; never changes unless your Will changes |
+| **Текущее** (слева) | Ваша Человечность прямо сейчас |
+| **Текущий максимум** (в центре) | Максимум, до которого может восстановиться Человечность; снижается навсегда кибернетикой |
+| **База** (справа, только чтение) | Воля × 5; меняется только при изменении Воли |
 
-You can edit Current and Current Max directly by clicking the numbers.
+Текущее и Текущий максимум можно редактировать нажатием на числа (при наличии прав).
 
-### Humanity thresholds
+### Пороги Человечности
 
-| Humanity | Zone | Description |
+| Человечность | Зона | Описание |
 |---|---|---|
-| > 70% of Base | 🟢 Human | You're still fully yourself |
-| 40–70% | ⚠️ Detachment | Emotional distance; GM may assign negative traits |
-| 25–39% | 🟠 Dissociation | Reality feels thin; GM assigns traits |
-| 1–24% | 🔴 Pre-Psychosis | Dangerous territory |
-| 0% | 💀 CYBERPSYCHOSIS | Character becomes an NPC |
+| > 70% от Базы | 🟢 Человек | Вы всё ещё полностью собой |
+| 40–70% | ⚠️ Отстранённость | Эмоциональная дистанция; Мастер может назначить негативные черты |
+| 25–39% | 🟠 Диссоциация | Реальность теряет чёткость; Мастер назначает черты |
+| 1–24% | 🔴 Пред-психоз | Опасная территория |
+| 0% | 💀 КИБЕР-ПСИХОЗ | Персонаж становится NPC |
 
-The widget colour and status label update automatically as your Humanity changes.
+Цвет виджета и метка статуса обновляются автоматически.
 
-### How to restore Humanity
+### Восстановление Человечности
 
-All recovery is manual — update the **Current** value directly:
+Восстановление инициируется вручную через Менеджер Человечности (кнопка ⚙ на виджете):
 
-| Source | Recovery |
+| Источник | Восстановление |
 |---|---|
-| Therapy session (1 week) | +1d6 |
-| Act of genuine heroism | +1d3 |
-| Downtime / rest | GM's discretion |
-| Removing an implant | Restore the Hard Cost of that implant to Current Max |
+| Сеанс терапии (1 неделя) | +1d6 (кнопка в менеджере) |
+| Акт настоящего героизма | +1d3 (кнопка в менеджере) |
+| Отдых / простой | По усмотрению Мастера |
+| Удаление импланта | Восстанавливает Жёсткие затраты импланта в Текущий максимум |
+
+Кнопки броска не превысят Текущий максимум.
+
+### Временные черты
+
+На листе персонажа рядом с чертами (Преимущества, Недостатки, Причуды) появляется кнопка 🕐. Нажмите её, чтобы добавить временную черту к нужной позиции.
+
+Временные черты:
+- Не оказывают механического эффекта (только информационные)
+- Имеют обратный отсчёт в днях или могут быть постоянными
+- Убывают автоматически при включённой интеграции с календарём
+- Управляются в Менеджере Человечности (⚙)
 
 ---
 
-## For the GM
+## Для Мастера
 
-### Marking a piece of equipment as Cyberware
+### Маркировка снаряжения как кибернетики
 
-1. Open the item sheet for any equipment.
-2. Click the **🤖 Mark as Cyberware** button in the title bar.
-3. Click it again (now labelled **⚙ Cyberware**) to open the configuration dialog.
+1. Откройте лист предмета любого снаряжения.
+2. Нажмите **🤖 Отметить как кибернетику** в заголовке окна.
+3. Нажмите снова (теперь **⚙ Кибернетика**) для открытия диалога конфигурации.
+4. Для снятия маркировки — кнопка **✕ Убрать маркировку** (с запросом подтверждения).
 
-**Configuration options:**
+> **Внимание:** снятие маркировки не восстанавливает Человечность автоматически.
 
-| Field | Description |
+**Параметры конфигурации:**
+
+| Поле | Описание |
 |---|---|
-| Category | Combat / Utility / Neural / Sensory / Medical |
-| Slot | Body location (Frontal Cortex, Eyes, Arms, etc.) |
-| Humanity Cost (dice) | Dice expression — `1d6`, `2d6`, `1d6-2`, etc. |
-| Craft Quality | Affects malfunction threshold (Street ×0.5 to Prototype ×15) |
-| Can Malfunction | Toggle + base threshold for malfunction rolls (3d6 ≤ X) |
-| Requires Maintenance | Toggle + monthly cost |
+| Категория | Боевая / Утилитарная / Нейронная / Сенсорная / Медицинская |
+| Слот | Расположение (Лобная кора, Глаза, Руки и т.д.) |
+| Стоимость Человечности (кубики) | Выражение кубиков — `1d6`, `2d6`, `1d6-2` и т.д. |
+| Качество изготовления | Влияет на порог неисправности (Уличное ×0,5 до Прототип ×15) |
+| Может ломаться | Переключатель + базовый порог проверки (3d6 ≤ X) |
+| Требует обслуживания | Переключатель + ежемесячная стоимость |
 
-### Installing an implant
+### Установка импланта
 
-1. Open the character's **Humanity Manager** (⚙ button on the Humanity widget).
-2. Click **🔌** next to the implant you want to install.
-3. The installation dialog opens:
+1. Откройте **Менеджер Человечности** (⚙ на виджете персонажа).
+2. Нажмите **🔌** рядом с нужным имплантом.
+3. Откроется диалог установки:
 
-**Step 1 — Roll Humanity Cost**
-Click *Roll Cost* to roll the item's cost dice (e.g. `2d6`).
-The result is split: **20% Hard** (permanent — reduces Current Max) and **80% Stress** (temporary).
+**Шаг 1 — Бросок стоимости Человечности**
 
-**Step 2 — Roll Adaptation (3d6 vs Will)**
+Нажмите *Бросить стоимость* для броска кубиков стоимости предмета (например `2d6`).
+Результат делится: **20% Жёстких** (постоянные — снижают Текущий максимум) и **80% Стресса** (временные — снижают Текущее).
 
-| Outcome | Effect |
+**Шаг 2 — Бросок адаптации (3d6 против Воли)**
+
+| Результат | Эффект |
 |---|---|
-| Critical Success (≤ 4, or Will−10) | Use the *minimum* possible cost |
-| Success (≤ Will) | Use the rolled cost |
-| Failure (> Will) | Use the rolled cost + GM assigns a **temporary** negative trait (1d6 days) |
-| Critical Failure (≥ 17, or Will+10) | Use the *maximum* possible cost + GM assigns a **permanent** negative trait |
+| Критический успех (≤ 4, или Воля−10) | Используется *минимально возможная* стоимость |
+| Успех (≤ Воля) | Используется выброшенная стоимость |
+| Провал (> Воля) | Выброшенная стоимость + Мастер назначает **временную** черту (1d6 дней) |
+| Критический провал (≥ 17, или Воля+10) | *Максимально возможная* стоимость + Мастер назначает **постоянную** черту |
 
-**Step 3 — Apply Changes**
-Click *Apply Changes*. A confirmation dialog shows the exact delta before you commit. You can cancel and adjust manually at any time.
+**Шаг 3 — Применение изменений**
 
-### Threshold crossing notifications
+Нажмите *Применить изменения*. Диалог подтверждения покажет точные значения до фиксации. В любой момент можно отменить и отредактировать вручную.
 
-When a character's Humanity crosses a threshold (in either direction), the module sends a **whisper to all GMs** with:
-- The new zone name and colour
-- A list of suggested negative traits (for worsening transitions)
-- Direction indicator (⬇️ worsening / ⬆️ recovering)
+### Удаление импланта
 
-The GM decides which traits, if any, to actually assign.
-
-### Craft Quality quick reference
-
-| Quality | Cost × | Malfunction mod |
-|---|---|---|
-| Street Grade | ×0.5 | +4 |
-| Cheap | ×0.75 | +2 |
-| Standard | ×1.0 | — |
-| Fine | ×4.0 | −2 |
-| Military | ×6.0 | −3 |
-| Very Fine | ×10 | −4 |
-| Prototype | ×15 | +3 |
-
-*Cost multipliers are shown for reference — pricing is handled manually.*
-
-### Calendar integration (optional)
-
-Enable *Calendar Integration* in module settings. When the in-game date advances (via Calendaria or Simple Calendar), temporary traits on all characters automatically have their remaining days decremented. A notification appears when a trait expires so the GM can remove it manually.
+В Менеджере Человечности нажмите **🗑** рядом с установленным имплантом. Диалог предложит:
+- **Восстановить** Жёсткие затраты в Текущий максимум (если имплант устанавливался через модуль)
+- **Удалить без восстановления**
 
 ---
 
-## Console API
+### Уведомления о пересечении порога
 
-Open the browser console (`F12`) in any Foundry game where this module is active.
+Когда Человечность персонажа пересекает порог (в любую сторону), модуль отправляет шёпот **всем Мастерам** с:
+- Названием и цветом новой зоны
+- Списком рекомендованных негативных черт (при ухудшении)
+- Индикатором направления (⬇️ ухудшение / ⬆️ восстановление)
 
-### Read a character's Humanity
+Мастер решает, какие черты (если вообще) назначить. Поведение уведомлений настраивается в настройках модуля.
+
+### Справочник качества изготовления
+
+| Качество | Цена × | Модификатор неисправности |
+|---|---|---|
+| Уличное | ×0,5 | +4 |
+| Дешёвое | ×0,75 | +2 |
+| Стандартное | ×1,0 | — |
+| Хорошее | ×4,0 | −2 |
+| Военное | ×6,0 | −3 |
+| Отличное | ×10 | −4 |
+| Прототип | ×15 | +3 |
+
+*Множители цены приведены для справки — ценообразование ведётся вручную.*
+
+### Интеграция с календарём (опционально)
+
+Включите *Интеграцию с календарём* в настройках модуля. Когда игровая дата переходит (через Calendaria или Simple Calendar), оставшиеся дни всех временных черт автоматически уменьшаются. При истечении черты появляется уведомление.
+
+---
+
+## Макросы
+
+Нажмите **Установить макросы** в настройках модуля, чтобы добавить в панель макросов пять готовых команд:
+
+| Макрос | Функция |
+|---|---|
+| 🧠 Терапия (1d6) | Бросает 1d6 и добавляет результат к Текущей Человечности выбранного токена (не выше Текущего максимума) |
+| 🦸 Героизм (1d3) | Как терапия, но бросает 1d3 |
+| 📊 Отчёт о статусе | Показывает все три значения Человечности и активные временные черты выбранного токена |
+| 💉 Применить урон Человечности | Запрашивает число и применяет его как урон с разделением 20%/80% |
+| 🖥 Открыть менеджер | Открывает Менеджер Человечности для выбранного токена |
+
+---
+
+## API консоли
+
+Откройте консоль браузера (`F12`) в любой игре Foundry с активным модулем.
+
+### Читать Человечность персонажа
 
 ```js
-// By actor name
 const actor = game.actors.getName("Jax Ryder");
 const h = actor.flags["cyberware-humanity"].humanity;
 console.log(h); // { base: 50, currentMax: 44, current: 36 }
 ```
 
-### Manually set Humanity values
+### Установить значения Человечности вручную
 
 ```js
 const actor = game.actors.getName("Jax Ryder");
-
-// Set current value only
-await actor.update({ "flags.cyberware-humanity.humanity.current": 30 });
-
-// Set all three at once
 await actor.update({
   "flags.cyberware-humanity.humanity.current":    30,
   "flags.cyberware-humanity.humanity.currentMax": 44,
@@ -188,25 +232,13 @@ await actor.update({
 });
 ```
 
-### Initialize Humanity manually (bypassing Auto-Init)
-
-```js
-const actor = game.actors.getName("Jax Ryder");
-const will  = actor.system.attributes.WILL.value; // e.g. 10
-const base  = will * 5;                            // 50
-
-await actor.update({
-  "flags.cyberware-humanity.humanity": { base, currentMax: base, current: base }
-});
-```
-
-### Apply Humanity damage directly
+### Применить урон Человечности напрямую
 
 ```js
 const actor  = game.actors.getName("Jax Ryder");
 const h      = actor.flags["cyberware-humanity"].humanity;
-const damage = 8;   // total cost of the implant
-const hard   = Math.ceil(damage * 0.20);  // 2 — permanent
+const damage = 8;
+const hard   = Math.ceil(damage * 0.20);
 
 await actor.update({
   "flags.cyberware-humanity.humanity.current":    Math.max(0, h.current    - damage),
@@ -214,29 +246,18 @@ await actor.update({
 });
 ```
 
-### Restore Humanity (therapy)
+### Восстановить Человечность (терапия)
 
 ```js
 const actor = game.actors.getName("Jax Ryder");
 const h     = actor.flags["cyberware-humanity"].humanity;
 const roll  = await new Roll("1d6").evaluate();
-await roll.toMessage({ flavor: "Therapy recovery" });
-
+await roll.toMessage({ flavor: "Восстановление через терапию" });
 const newCurrent = Math.min(h.currentMax, h.current + roll.total);
 await actor.update({ "flags.cyberware-humanity.humanity.current": newCurrent });
 ```
 
-### Check threshold for a value
-
-```js
-// Returns: "human" | "detachment" | "dissociation" | "prePsychosis" | "cyberpsychosis"
-const { getThresholdForValue } = await import(
-  "/modules/cyberware-humanity/scripts/utils.js"
-);
-console.log(getThresholdForValue(22, 50)); // "dissociation"
-```
-
-### Open the Humanity Manager for an actor
+### Открыть Менеджер Человечности
 
 ```js
 const { openHumanityManager } = await import(
@@ -245,80 +266,76 @@ const { openHumanityManager } = await import(
 openHumanityManager(game.actors.getName("Jax Ryder"));
 ```
 
-### Open the install dialog for an implant
-
-```js
-const { openInstallDialog } = await import(
-  "/modules/cyberware-humanity/scripts/installation.js"
-);
-const actor   = game.actors.getName("Jax Ryder");
-const implant = actor.items.getName("Cybereyes Mk.I");
-openInstallDialog(actor, implant);
-```
-
-### List all cyberware on an actor
+### Список всей кибернетики персонажа
 
 ```js
 const actor = game.actors.getName("Jax Ryder");
 const mId   = "cyberware-humanity";
-
 actor.items
   .filter(i => i.flags[mId]?.isCyberware)
   .forEach(i => {
     const d = i.flags[mId].cyberData;
-    console.log(`${i.name} | ${d.slot} | ${d.humanityCostDice} | installed: ${d.installed}`);
+    console.log(`${i.name} | ${d.slot} | ${d.humanityCostDice} | установлен: ${d.installed}`);
   });
 ```
 
-### Add a temporary trait
+### Добавить временную черту
 
 ```js
+const { addTemporaryTrait } = await import(
+  "/modules/cyberware-humanity/scripts/temporary-traits.js"
+);
 const actor = game.actors.getName("Jax Ryder");
-const traits = actor.flags["cyberware-humanity"]?.temporaryTraits ?? [];
-
-await actor.update({
-  "flags.cyberware-humanity.temporaryTraits": [
-    ...traits,
-    { name: "Nightmares [-5]", daysRemaining: 6, source: "Mantis Blades install" }
-  ]
+await addTemporaryTrait(actor, {
+  name: "Кошмары [-5]",
+  daysRemaining: 6,
+  source: "Установка лезвий-мантис"
 });
+```
+
+### Проверить порог для значения
+
+```js
+// Возвращает: "human" | "detachment" | "dissociation" | "prePsychosis" | "cyberpsychosis"
+const { getThresholdForValue } = await import(
+  "/modules/cyberware-humanity/scripts/utils.js"
+);
+console.log(getThresholdForValue(22, 50)); // "dissociation"
 ```
 
 ---
 
-## Roadmap
+## Дорожная карта
 
-### v1.1 — Quality of Life
-- [ ] Uninstall button on the Humanity Manager (restores Hard Cost to Current Max)
-- [ ] Temporary-trait list panel with manual remove/extend buttons
-- [ ] Recovery roll button (1d6 therapy) directly in the Humanity Manager
-- [ ] Sheet widget for the `enemy` actor type (currently character only)
+### v1.2 — Компендиум
+- [ ] Пак компендиума с 30+ преднастроенными предметами кибернетики
+- [ ] Макрос импорта стандартных имплантов
+- [ ] Таблицы предустановленных черт по порогам (выбираемые Мастером)
 
-### v1.2 — Compendium
-- [ ] Compendium pack with 30+ pre-configured cyberware items
-- [ ] Default implants import macro
-- [ ] Preset trait tables per threshold (selectable by GM)
+### v1.3 — Карта тела
+- [ ] Визуальный силуэт тела с занятыми/свободными слотами
+- [ ] Предупреждения о конфликтах слотов
 
-### v1.3 — Body Map
-- [ ] Visual body silhouette showing occupied/free slots
-- [ ] Slot conflict warnings (e.g. two items claiming the same eye)
+### v2.0 — Расширенный
+- [ ] Опциональное автоприменение Активных Эффектов (штрафы к параметрам, бонусы и т.д.) — переключается для каждого импланта, по умолчанию выключено
+- [ ] Автоматизация броска неисправности с таблицей результатов
+- [ ] Планировщик техобслуживания с интеграцией календаря
 
-### v2.0 — Advanced
-- [ ] Optional automatic Active Effect application (damage to secondary stats, vision bonuses, etc.) — toggled per-implant, off by default
-- [ ] Malfunction roll automation with result table
-- [ ] Maintenance scheduler with calendar integration
-- [ ] Full Simple Calendar / Calendaria deep integration (track install date, schedule maintenance, auto-expire traits)
+### Не планируется (принципиально)
 
-### Not planned (by design)
-These are explicitly **out of scope** to keep the module non-invasive:
+Следующее **намеренно вне области применения**, чтобы модуль оставался ненавязчивым:
 
-- ❌ Auto-assignment of negative traits
-- ❌ Hard enforcement of slot limits
-- ❌ Automatic stat penalties from cyberpsychosis
-- ❌ Forced character restrictions at any threshold
+- ❌ Автоматическое назначение негативных черт
+- ❌ Принудительное ограничение слотов
+- ❌ Автоматические штрафы к параметрам от кибер-психоза
+- ❌ Принудительные ограничения персонажа на каком-либо пороге
 
 ---
 
-## License
+## Лицензия
 
 [Apache 2.0](LICENSE)
+
+
+
+

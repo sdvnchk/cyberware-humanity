@@ -3,8 +3,8 @@ import { registerCharacterSheetHooks }           from "./character-sheet-integra
 import { registerCalendariaHooks }               from "./calendaria-integration.js";
 import { markAsCyberware, openCyberwareConfig }  from "./cyberware.js";
 import { checkThresholdCrossing }                from "./thresholds.js";
-import { getActorHumanity, getWillValue }        from "./utils.js";
-import { canDo, requirePermission }              from "./permissions.js";
+import { getActorHumanity }                       from "./utils.js";
+import { requirePermission }                      from "./permissions.js";
 import { MacroInstallerMenu }                    from "./macros.js";
 
 // ── init ─────────────────────────────────────────────────────────────────────

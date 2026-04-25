@@ -57,7 +57,9 @@ export function checkThresholdCrossing(actor, oldCurrent, newCurrent) {
   const newKey = getThresholdForValue(newCurrent, base);
 
   if (oldKey !== newKey) {
-    notifyThresholdCrossed(actor, oldKey, newKey);
+    notifyThresholdCrossed(actor, oldKey, newKey).catch(err =>
+      console.error(`${MODULE_ID} | threshold notification failed:`, err)
+    );
   }
 }
 

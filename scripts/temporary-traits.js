@@ -63,7 +63,9 @@ export function openAddTempTraitDialog(actor, prefillName = "", onDone = null) {
         icon:  '<i class="fas fa-plus"></i>',
         label: game.i18n.localize("CYBERWARE.TempTrait.Add"),
         callback: async (html) => {
-          const fd   = new FormDataExtended(html.find("form")[0]).object;
+          const form = html.find("form")[0];
+          if (!form) return false;
+          const fd   = new FormDataExtended(form).object;
           const name = (fd.name ?? "").trim();
           if (!name) {
             ui.notifications.warn(game.i18n.localize("CYBERWARE.TempTrait.NameRequired"));
@@ -122,7 +124,9 @@ export function openEditTempTraitDialog(actor, trait, onDone = null) {
         icon:  '<i class="fas fa-save"></i>',
         label: game.i18n.localize("CYBERWARE.TempTrait.Update"),
         callback: async (html) => {
-          const fd   = new FormDataExtended(html.find("form")[0]).object;
+          const form = html.find("form")[0];
+          if (!form) return false;
+          const fd   = new FormDataExtended(form).object;
           const name = (fd.name ?? "").trim();
           if (!name) {
             ui.notifications.warn(game.i18n.localize("CYBERWARE.TempTrait.NameRequired"));
