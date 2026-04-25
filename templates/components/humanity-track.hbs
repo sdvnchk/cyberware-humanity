@@ -1,0 +1,60 @@
+{{!-- Humanity track partial — data expected:
+  current, currentMax, base, pct, maxPct, threshKey, color, actorId, moduleId, canEdit
+--}}
+<div class="resource-track humanity-track"
+     data-actor-id="{{actorId}}"
+     style="--humanity-color:{{color}}">
+
+  <div class="resource-label">
+    <span class="label-text">{{localize "CYBERWARE.Humanity"}}</span>
+    <button class="btn-open-humanity-manager" type="button"
+            title="{{localize "CYBERWARE.OpenManager"}}">
+      <i class="fas fa-cog"></i>
+    </button>
+  </div>
+
+  <div class="resource-values">
+    <input type="number"
+           name="flags.{{moduleId}}.humanity.current"
+           value="{{current}}"
+           class="resource-input current"
+           title="{{localize "CYBERWARE.CurrentHumanity"}}"
+           min="0" max="{{currentMax}}"
+           data-dtype="Number"
+           {{#unless canEdit}}readonly disabled{{/unless}}>
+    <span class="separator">/</span>
+    <input type="number"
+           name="flags.{{moduleId}}.humanity.currentMax"
+           value="{{currentMax}}"
+           class="resource-input max"
+           title="{{localize "CYBERWARE.MaxHumanity"}}"
+           min="0" max="{{base}}"
+           data-dtype="Number"
+           {{#unless canEdit}}readonly disabled{{/unless}}>
+    <span class="separator">/</span>
+    <span class="base-value"
+          title="{{localize "CYBERWARE.BaseHumanity"}} (Will × 5)">{{base}}</span>
+  </div>
+
+  <div class="humanity-mini-bar">
+    <div class="bar-max-fill"  style="width:{{maxPct}}%"></div>
+    <div class="bar-fill"      style="width:{{pct}}%;background:{{color}}"></div>
+    <div class="threshold-markers">
+      <div class="threshold-marker" style="left:70%" title="Detachment"></div>
+      <div class="threshold-marker" style="left:40%" title="Dissociation"></div>
+      <div class="threshold-marker" style="left:25%" title="Pre-Psychosis"></div>
+    </div>
+  </div>
+
+  <div class="humanity-status" data-status="{{threshKey}}">
+    <span class="status-icon">
+      {{#if (eq threshKey "human")}}🟢{{/if}}
+      {{#if (eq threshKey "detachment")}}⚠️{{/if}}
+      {{#if (eq threshKey "dissociation")}}🟠{{/if}}
+      {{#if (eq threshKey "prePsychosis")}}🔴{{/if}}
+      {{#if (eq threshKey "cyberpsychosis")}}💀{{/if}}
+    </span>
+    <span class="status-text">{{localize (concat "CYBERWARE.Threshold." threshKey)}}</span>
+  </div>
+
+</div>

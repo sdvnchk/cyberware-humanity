@@ -1,0 +1,202 @@
+[
+  {
+    "name": "Reflex Booster",
+    "type": "equipment",
+    "system": {
+      "description": "Neural enhancement that accelerates reflexes and reaction time.",
+      "quantity": 1,
+      "weight": 0,
+      "value": 12000
+    },
+    "flags": {
+      "cyberware-humanity": {
+        "isCyberware": true,
+        "cyberData": {
+          "category": "neural",
+          "slot": "nervous_system",
+          "humanityCostDice": "2d6",
+          "craftQuality": "standard",
+          "condition": "mint",
+          "malfunction": { "enabled": true, "threshold": 6 },
+          "maintenance": { "required": true, "cost": 500 },
+          "installed": false
+        }
+      }
+    }
+  },
+  {
+    "name": "Cybereyes Mk.I",
+    "type": "equipment",
+    "system": {
+      "description": "Optical implants with low-light vision and 10× zoom.",
+      "quantity": 1,
+      "weight": 0,
+      "value": 4000
+    },
+    "flags": {
+      "cyberware-humanity": {
+        "isCyberware": true,
+        "cyberData": {
+          "category": "sensory",
+          "slot": "eyes",
+          "humanityCostDice": "1d6",
+          "craftQuality": "standard",
+          "condition": "mint",
+          "malfunction": { "enabled": true, "threshold": 6 },
+          "maintenance": { "required": false, "cost": 0 },
+          "installed": false
+        }
+      }
+    }
+  },
+  {
+    "name": "Subdermal Armour",
+    "type": "equipment",
+    "system": {
+      "description": "Woven carbon-fibre mesh beneath the skin. DR +2.",
+      "quantity": 1,
+      "weight": 5,
+      "value": 8000
+    },
+    "flags": {
+      "cyberware-humanity": {
+        "isCyberware": true,
+        "cyberData": {
+          "category": "combat",
+          "slot": "integumentary_system",
+          "humanityCostDice": "1d6+2",
+          "craftQuality": "standard",
+          "condition": "mint",
+          "malfunction": { "enabled": false, "threshold": 6 },
+          "maintenance": { "required": false, "cost": 0 },
+          "installed": false
+        }
+      }
+    }
+  },
+  {
+    "name": "Cyberarm (Right)",
+    "type": "equipment",
+    "system": {
+      "description": "Full prosthetic arm replacement with built-in tool sockets.",
+      "quantity": 1,
+      "weight": 8,
+      "value": 20000
+    },
+    "flags": {
+      "cyberware-humanity": {
+        "isCyberware": true,
+        "cyberData": {
+          "category": "utility",
+          "slot": "arms",
+          "humanityCostDice": "2d6+2",
+          "craftQuality": "standard",
+          "condition": "mint",
+          "malfunction": { "enabled": true, "threshold": 5 },
+          "maintenance": { "required": true, "cost": 600 },
+          "installed": false
+        }
+      }
+    }
+  },
+  {
+    "name": "Neural Interface Jack",
+    "type": "equipment",
+    "system": {
+      "description": "Direct hardware interface port at the base of the skull.",
+      "quantity": 1,
+      "weight": 0,
+      "value": 3000
+    },
+    "flags": {
+      "cyberware-humanity": {
+        "isCyberware": true,
+        "cyberData": {
+          "category": "neural",
+          "slot": "frontal_cortex",
+          "humanityCostDice": "1d6-1",
+          "craftQuality": "standard",
+          "condition": "mint",
+          "malfunction": { "enabled": false, "threshold": 6 },
+          "maintenance": { "required": false, "cost": 0 },
+          "installed": false
+        }
+      }
+    }
+  },
+  {
+    "name": "Pain Editor",
+    "type": "equipment",
+    "system": {
+      "description": "Blocks pain signals to the conscious mind. High humanity cost.",
+      "quantity": 1,
+      "weight": 0,
+      "value": 25000
+    },
+    "flags": {
+      "cyberware-humanity": {
+        "isCyberware": true,
+        "cyberData": {
+          "category": "neural",
+          "slot": "nervous_system",
+          "humanityCostDice": "3d6",
+          "craftQuality": "standard",
+          "condition": "mint",
+          "malfunction": { "enabled": true, "threshold": 7 },
+          "maintenance": { "required": true, "cost": 800 },
+          "installed": false
+        }
+      }
+    }
+  },
+  {
+    "name": "Nanobotic Blood Filter",
+    "type": "equipment",
+    "system": {
+      "description": "Nanobot colony that filters toxins and accelerates healing.",
+      "quantity": 1,
+      "weight": 0,
+      "value": 15000
+    },
+    "flags": {
+      "cyberware-humanity": {
+        "isCyberware": true,
+        "cyberData": {
+          "category": "medical",
+          "slot": "circulatory_system",
+          "humanityCostDice": "1d6",
+          "craftQuality": "fine",
+          "condition": "mint",
+          "malfunction": { "enabled": false, "threshold": 6 },
+          "maintenance": { "required": true, "cost": 400 },
+          "installed": false
+        }
+      }
+    }
+  },
+  {
+    "name": "Mantis Blades",
+    "type": "equipment",
+    "system": {
+      "description": "Retractable forearm blades. Reach C, 1, sw+2 cut.",
+      "quantity": 1,
+      "weight": 2,
+      "value": 10000
+    },
+    "flags": {
+      "cyberware-humanity": {
+        "isCyberware": true,
+        "cyberData": {
+          "category": "combat",
+          "slot": "arms",
+          "humanityCostDice": "2d6",
+          "craftQuality": "standard",
+          "condition": "mint",
+          "malfunction": { "enabled": true, "threshold": 6 },
+          "maintenance": { "required": true, "cost": 300 },
+          "installed": false
+        }
+      }
+    }
+  }
+]
