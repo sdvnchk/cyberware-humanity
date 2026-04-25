@@ -111,11 +111,11 @@ function buildTrackHtml({ current, currentMax, base, pct, maxPct, threshKey, col
   };
 
   const markers = [
-    { pct: 70, label: "Detachment" },
-    { pct: 40, label: "Dissociation" },
-    { pct: 25, label: "Pre-Psychosis" }
+    { pct: 70, key: "detachment" },
+    { pct: 40, key: "dissociation" },
+    { pct: 25, key: "prePsychosis" }
   ].map(m =>
-    `<div class="threshold-marker" style="left:${m.pct}%" title="${m.label}"></div>`
+    `<div class="threshold-marker" style="left:${m.pct}%" title="${game.i18n.localize(`CYBERWARE.Threshold.${m.key}`)}"></div>`
   ).join("");
 
   return `
@@ -164,7 +164,7 @@ function buildTrackHtml({ current, currentMax, base, pct, maxPct, threshKey, col
 
       <div class="humanity-status" data-status="${threshKey}">
         <span class="status-icon">${statusIcons[threshKey] ?? "❓"}</span>
-        <span class="status-text">${threshData.label}</span>
+        <span class="status-text">${game.i18n.localize(threshData.label)}</span>
       </div>
     </div>`;
 }
@@ -298,7 +298,7 @@ export function openHumanityManager(actor) {
       <div class="manager-bar">
         <div class="bar-fill" style="width:${pct}%;background:${threshData.color}"></div>
       </div>
-      <div class="manager-status" data-status="${threshKey}">${threshData.label}</div>
+      <div class="manager-status" data-status="${threshKey}">${game.i18n.localize(threshData.label)}</div>
       <div class="manager-recovery-row">
         <button class="btn-recovery btn-therapy" type="button">
           <i class="fas fa-hospital-alt"></i> ${game.i18n.localize("CYBERWARE.RecoveryTherapy")}

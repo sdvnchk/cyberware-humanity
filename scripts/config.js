@@ -3,14 +3,14 @@ export const MODULE_ID = "cyberware-humanity";
 export const THRESHOLDS = {
   human: {
     minPercent: 70,
-    label: "Human",
+    label: "CYBERWARE.Threshold.human",
     color: "#00ff9f",
     suggestedTraits: []
   },
   detachment: {
     minPercent: 40,
     maxPercent: 70,
-    label: "Detachment",
+    label: "CYBERWARE.Threshold.detachment",
     color: "#ffed4e",
     suggestedTraits: [
       "Low Empathy [-20]",
@@ -22,7 +22,7 @@ export const THRESHOLDS = {
   dissociation: {
     minPercent: 25,
     maxPercent: 40,
-    label: "Dissociation",
+    label: "CYBERWARE.Threshold.dissociation",
     color: "#ff6600",
     suggestedTraits: [
       "Callous [-5]",
@@ -35,7 +35,7 @@ export const THRESHOLDS = {
   prePsychosis: {
     minPercent: 1,
     maxPercent: 25,
-    label: "Pre-Psychosis",
+    label: "CYBERWARE.Threshold.prePsychosis",
     color: "#ff0040",
     suggestedTraits: [
       "Berserk (12) [-10]",
@@ -48,20 +48,20 @@ export const THRESHOLDS = {
   cyberpsychosis: {
     minPercent: 0,
     maxPercent: 1,
-    label: "CYBERPSYCHOSIS",
+    label: "CYBERWARE.Threshold.cyberpsychosis",
     color: "#8B0000",
     suggestedTraits: []
   }
 };
 
 export const CRAFT_QUALITY = {
-  street:    { label: "Street Grade",  costMult: 0.5,  malfunctionMod: +4 },
-  cheap:     { label: "Cheap",         costMult: 0.75, malfunctionMod: +2 },
-  standard:  { label: "Standard",      costMult: 1.0,  malfunctionMod:  0 },
-  fine:      { label: "Fine",          costMult: 4.0,  malfunctionMod: -2 },
-  military:  { label: "Military",      costMult: 6.0,  malfunctionMod: -3 },
-  veryFine:  { label: "Very Fine",     costMult: 10.0, malfunctionMod: -4 },
-  prototype: { label: "Prototype",     costMult: 15.0, malfunctionMod: +3 }
+  street:    { label: "CYBERWARE.CraftQuality.street",    costMult: 0.5,  malfunctionMod: +4 },
+  cheap:     { label: "CYBERWARE.CraftQuality.cheap",     costMult: 0.75, malfunctionMod: +2 },
+  standard:  { label: "CYBERWARE.CraftQuality.standard",  costMult: 1.0,  malfunctionMod:  0 },
+  fine:      { label: "CYBERWARE.CraftQuality.fine",      costMult: 4.0,  malfunctionMod: -2 },
+  military:  { label: "CYBERWARE.CraftQuality.military",  costMult: 6.0,  malfunctionMod: -3 },
+  veryFine:  { label: "CYBERWARE.CraftQuality.veryFine",  costMult: 10.0, malfunctionMod: -4 },
+  prototype: { label: "CYBERWARE.CraftQuality.prototype", costMult: 15.0, malfunctionMod: +3 }
 };
 
 export const CYBERWARE_SLOTS = [

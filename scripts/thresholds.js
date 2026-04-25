@@ -19,7 +19,7 @@ export async function notifyThresholdCrossed(actor, oldKey, newKey) {
       <h3>${direction} ${game.i18n.localize("CYBERWARE.ThresholdCrossed")}</h3>
       <p>
         <strong>${actor.name}</strong>
-        ${game.i18n.format("CYBERWARE.EnteredZone", { zone: `<span style="color:${data.color}">${data.label}</span>` })}
+        ${game.i18n.format("CYBERWARE.EnteredZone", { zone: `<span style="color:${data.color}">${game.i18n.localize(data.label)}</span>` })}
       </p>
       ${traitsHtml}
     </div>`;

@@ -53,5 +53,6 @@ export async function ensureHumanityFlags(actor) {
 }
 
 export function formatQualityLabel(quality) {
-  return CRAFT_QUALITY[quality]?.label ?? quality;
+  const key = CRAFT_QUALITY[quality]?.label;
+  return key ? game.i18n.localize(key) : quality;
 }
