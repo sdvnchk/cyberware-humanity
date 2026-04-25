@@ -92,7 +92,9 @@ export async function openCyberwareConfig(item) {
         icon:  '<i class="fas fa-save"></i>',
         label: game.i18n.localize("CYBERWARE.Save"),
         callback: async (html) => {
-          const fd = new FormDataExtended(html.find("form")[0]).object;
+          const form = html.find("form")[0];
+          if (!form) return false;
+          const fd = new FormDataExtended(form).object;
           await item.update({
             [`flags.${MODULE_ID}.cyberData`]: {
               ...data,

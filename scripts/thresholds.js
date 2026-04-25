@@ -2,9 +2,9 @@ import { MODULE_ID } from "./config.js";
 import { getActorHumanity, getThresholdForValue, getThresholdData, gmUserIds } from "./utils.js";
 
 export async function notifyThresholdCrossed(actor, oldKey, newKey) {
-  const data = getThresholdData(newKey);
-  const gms  = gmUserIds();
-  if (!gms.length) return;
+  const data      = getThresholdData(newKey);
+  const gms       = gmUserIds();
+  const direction = isWorsening(oldKey, newKey) ? "⬇️" : "⬆️";
 
   const traitsHtml = data.suggestedTraits?.length
     ? `<div class="suggested-traits">
@@ -14,19 +14,36 @@ export async function notifyThresholdCrossed(actor, oldKey, newKey) {
        </div>`
     : "";
 
-  const direction = isWorsening(oldKey, newKey) ? "⬇️" : "⬆️";
+  const msgContent = `
+    <div class="cyberware-notification threshold-notification" style="border-left:4px solid ${data.color}">
+      <h3>${direction} ${game.i18n.localize("CYBERWARE.ThresholdCrossed")}</h3>
+      <p>
+        <strong>${actor.name}</strong>
+        ${game.i18n.format("CYBERWARE.EnteredZone", { zone: `<span style="color:${data.color}">${data.label}</span>` })}
+      </p>
+      ${traitsHtml}
+    </div>`;
+
+  const isPublic   = game.settings.get(MODULE_ID, "publicThresholdNotification");
+  const notifyPlayer = game.settings.get(MODULE_ID, "notifyPlayerOnThreshold");
+
+  let whisperIds = null;
+
+  if (!isPublic) {
+    whisperIds = [...gms];
+    if (notifyPlayer) {
+      // Add the users who own this actor (excluding GMs already included)
+      const ownerIds = game.users
+        .filter(u => !u.isGM && actor.testUserPermission(u, "OWNER"))
+        .map(u => u.id);
+      whisperIds = [...new Set([...whisperIds, ...ownerIds])];
+    }
+    if (!whisperIds.length) return;
+  }
 
   await ChatMessage.create({
-    content: `
-      <div class="cyberware-notification threshold-notification" style="border-left:4px solid ${data.color}">
-        <h3>${direction} ${game.i18n.localize("CYBERWARE.ThresholdCrossed")}</h3>
-        <p>
-          <strong>${actor.name}</strong>
-          ${game.i18n.format("CYBERWARE.EnteredZone", { zone: `<span style="color:${data.color}">${data.label}</span>` })}
-        </p>
-        ${traitsHtml}
-      </div>`,
-    whisper: gms,
+    content: msgContent,
+    whisper: whisperIds ?? [],
     speaker: { alias: game.i18n.localize("CYBERWARE.SystemSpeaker") }
   });
 }
@@ -35,12 +52,14 @@ export function checkThresholdCrossing(actor, oldCurrent, newCurrent) {
   const humanity = getActorHumanity(actor);
   if (!humanity) return;
 
-  const base    = humanity.base;
-  const oldKey  = getThresholdForValue(oldCurrent, base);
-  const newKey  = getThresholdForValue(newCurrent, base);
+  const base   = humanity.base;
+  const oldKey = getThresholdForValue(oldCurrent, base);
+  const newKey = getThresholdForValue(newCurrent, base);
 
   if (oldKey !== newKey) {
-    notifyThresholdCrossed(actor, oldKey, newKey);
+    notifyThresholdCrossed(actor, oldKey, newKey).catch(err =>
+      console.error(`${MODULE_ID} | threshold notification failed:`, err)
+    );
   }
 }
 
