@@ -1,0 +1,50 @@
+/* ── Cyberpunk theme variables ──────────────────────────────────────────── */
+:root {
+  --cyber-blue:      #00c8ff;
+  --cyber-blue-dim:  rgba(0, 200, 255, 0.15);
+  --cyber-green:     #00ff9f;
+  --cyber-red:       #ff0040;
+  --cyber-orange:    #ff6600;
+  --cyber-yellow:    #ffed4e;
+  --cyber-dark-red:  #8B0000;
+  --cyber-bg:        rgba(5, 10, 20, 0.85);
+  --cyber-panel:     rgba(0, 20, 40, 0.8);
+  --cyber-border:    rgba(0, 200, 255, 0.4);
+  --cyber-text:      #c8e8ff;
+  --cyber-font:      'Rajdhani', 'Orbitron', monospace;
+}
+
+/* ── Shared notification styles ─────────────────────────────────────────── */
+.cyberware-notification {
+  font-family: var(--cyber-font);
+  background:  var(--cyber-panel);
+  border:      1px solid var(--cyber-border);
+  border-radius: 4px;
+  padding:     10px 14px;
+  color:       var(--cyber-text);
+}
+
+.cyberware-notification h3 {
+  font-size:      1.1em;
+  margin:         0 0 6px;
+  color:          var(--cyber-blue);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border-bottom:  1px solid var(--cyber-border);
+  padding-bottom: 4px;
+}
+
+.cyberware-notification p   { margin: 4px 0; font-size: 0.9em; }
+.cyberware-notification ul  { margin: 4px 0 4px 18px; font-size: 0.85em; }
+.cyberware-notification li  { margin: 2px 0; }
+
+.suggested-traits h4 {
+  font-size:  0.9em;
+  margin:     8px 0 2px;
+  color:      var(--cyber-yellow);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.adaptation-failure { border-left: 4px solid var(--cyber-red) !important; }
+.threshold-notification { border-left: 4px solid var(--cyber-blue) !important; }

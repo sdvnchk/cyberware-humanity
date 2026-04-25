@@ -1,0 +1,284 @@
+/* ── Shared dialog base ─────────────────────────────────────────────────── */
+.cyberware-config-form,
+.install-dialog,
+.humanity-manager {
+  font-family: var(--cyber-font, 'Rajdhani', monospace);
+  color:       var(--cyber-text, #c8e8ff);
+}
+
+/* ── Cyberware config form ──────────────────────────────────────────────── */
+.cyberware-config-form .form-group {
+  display:       flex;
+  flex-direction: column;
+  gap:           2px;
+  margin-bottom: 10px;
+}
+
+.cyberware-config-form label {
+  font-size:  12px;
+  font-weight: 700;
+  color:      var(--cyber-blue, #00c8ff);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.cyberware-config-form label.checkbox {
+  display:     flex;
+  align-items: center;
+  gap:         6px;
+  font-size:   12px;
+}
+
+.cyberware-config-form select,
+.cyberware-config-form input[type="text"],
+.cyberware-config-form input[type="number"] {
+  background:   rgba(0, 0, 0, 0.4);
+  border:       1px solid var(--cyber-border, rgba(0,200,255,0.4));
+  border-radius: 3px;
+  color:        #fff;
+  padding:      4px 6px;
+  font-family:  inherit;
+  font-size:    13px;
+}
+
+.cyberware-config-form select:focus,
+.cyberware-config-form input:focus {
+  outline:      none;
+  border-color: var(--cyber-blue, #00c8ff);
+}
+
+.cyberware-config-form .hint,
+.cyberware-config-form small {
+  font-size: 11px;
+  opacity:   0.6;
+  color:     var(--cyber-text, #c8e8ff);
+  margin:    0;
+}
+
+/* ── Install dialog ─────────────────────────────────────────────────────── */
+.install-dialog .install-summary {
+  background:    rgba(0, 200, 255, 0.06);
+  border:        1px solid var(--cyber-border, rgba(0,200,255,0.3));
+  border-radius: 4px;
+  padding:       8px 12px;
+  margin-bottom: 12px;
+}
+
+.install-dialog .install-summary h3 {
+  font-size:   1em;
+  margin:      0 0 6px;
+  color:       var(--cyber-blue, #00c8ff);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.install-dialog .stats-row {
+  display:   flex;
+  gap:       16px;
+  font-size: 12px;
+  margin-bottom: 4px;
+}
+
+.install-dialog .humanity-preview { font-size: 12px; }
+
+.install-dialog .install-steps { display: flex; flex-direction: column; gap: 10px; }
+
+.install-dialog .step {
+  border:        1px solid var(--cyber-border, rgba(0,200,255,0.25));
+  border-radius: 4px;
+  padding:       8px 10px;
+}
+
+.install-dialog .step h4 {
+  font-size:  11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color:      var(--cyber-blue, #00c8ff);
+  margin:     0 0 6px;
+}
+
+.install-dialog button.btn-roll-cost,
+.install-dialog button.btn-roll-adaptation {
+  background:    var(--cyber-blue-dim, rgba(0,200,255,0.15));
+  border:        1px solid var(--cyber-blue, #00c8ff);
+  border-radius: 3px;
+  color:         var(--cyber-blue, #00c8ff);
+  cursor:        pointer;
+  font-family:   inherit;
+  font-size:     12px;
+  font-weight:   700;
+  padding:       4px 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  transition:    background 0.2s;
+}
+.install-dialog button.btn-roll-cost:hover,
+.install-dialog button.btn-roll-adaptation:hover {
+  background: rgba(0, 200, 255, 0.3);
+}
+
+.install-dialog .roll-result {
+  display:    flex;
+  flex-direction: column;
+  gap:        2px;
+  font-size:  12px;
+  margin-top: 6px;
+  padding:    4px 8px;
+  background: rgba(0,0,0,0.3);
+  border-radius: 2px;
+}
+
+.install-dialog .roll-result .total { font-weight: 700; color: #fff; }
+.install-dialog .roll-result .hard  { color: var(--cyber-red, #ff0040); }
+.install-dialog .roll-result .stress { color: var(--cyber-yellow, #ffed4e); }
+
+.install-dialog .outcome-critical_success { color: var(--cyber-green, #00ff9f); }
+.install-dialog .outcome-success          { color: var(--cyber-green, #00ff9f); }
+.install-dialog .outcome-failure          { color: var(--cyber-orange, #ff6600); }
+.install-dialog .outcome-critical_failure { color: var(--cyber-red, #ff0040); }
+
+.install-dialog .outcome-label { font-size: 11px; }
+
+.install-dialog .preview-values {
+  display:    flex;
+  flex-direction: column;
+  gap:        3px;
+  font-size:  12px;
+}
+
+.install-dialog .preview-values .breakdown {
+  font-size: 11px;
+  opacity:   0.7;
+  margin-top: 2px;
+}
+
+/* ── Confirm install dialog ─────────────────────────────────────────────── */
+.confirm-install { font-size: 13px; }
+.confirm-install ul { margin: 6px 0 6px 18px; }
+.confirm-install p em { font-size: 11px; opacity: 0.7; }
+
+/* ── Humanity Manager dialog ────────────────────────────────────────────── */
+.humanity-manager { display: flex; flex-direction: column; gap: 12px; }
+
+.humanity-manager .humanity-overview {
+  background:    rgba(0, 200, 255, 0.05);
+  border:        1px solid var(--cyber-border, rgba(0,200,255,0.3));
+  border-left:   3px solid var(--humanity-color, #00ff9f);
+  border-radius: 4px;
+  padding:       10px 14px;
+}
+
+.humanity-manager h3 {
+  font-size:   12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color:       var(--cyber-blue, #00c8ff);
+  margin:      0 0 8px;
+}
+
+.humanity-manager .overview-values {
+  display:         flex;
+  gap:             12px;
+  justify-content: space-around;
+  margin-bottom:   8px;
+}
+
+.ov-val {
+  display:        flex;
+  flex-direction: column;
+  align-items:    center;
+  gap:            2px;
+}
+
+.ov-label  { font-size: 10px; text-transform: uppercase; letter-spacing: 1px; opacity: 0.6; }
+.ov-number { font-size: 20px; font-weight: 700; line-height: 1; }
+
+.humanity-manager .manager-bar {
+  height:     10px;
+  background: rgba(0,0,0,0.4);
+  border:     1px solid var(--cyber-border, rgba(0,200,255,0.3));
+  border-radius: 3px;
+  overflow:   hidden;
+  margin-bottom: 6px;
+}
+.humanity-manager .manager-bar .bar-fill {
+  height: 100%;
+  transition: width 0.4s, background 0.4s;
+}
+
+.humanity-manager .manager-status {
+  text-align:     center;
+  font-size:      11px;
+  font-weight:    700;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color:          var(--humanity-color, #00ff9f);
+}
+
+/* ── Cyberware table ────────────────────────────────────────────────────── */
+.cyberware-table {
+  width:           100%;
+  border-collapse: collapse;
+  font-size:       12px;
+}
+
+.cyberware-table thead tr {
+  background: rgba(0, 200, 255, 0.1);
+}
+
+.cyberware-table th {
+  text-align:  left;
+  font-weight: 700;
+  font-size:   10px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color:       var(--cyber-blue, #00c8ff);
+  padding:     4px 8px;
+  border-bottom: 1px solid var(--cyber-border, rgba(0,200,255,0.3));
+}
+
+.cyberware-table td {
+  padding:     5px 8px;
+  border-bottom: 1px solid rgba(0,200,255,0.1);
+  vertical-align: middle;
+}
+
+.cyberware-row.installed td:first-child::after {
+  content:    "";
+}
+.cyberware-row.uninstalled { opacity: 0.7; }
+
+.text-center { text-align: center; }
+
+.row-actions {
+  display:  flex;
+  gap:      4px;
+  align-items: center;
+}
+
+.row-actions button {
+  background:    transparent;
+  border:        1px solid var(--cyber-border, rgba(0,200,255,0.4));
+  border-radius: 3px;
+  color:         var(--cyber-blue, #00c8ff);
+  cursor:        pointer;
+  font-size:     11px;
+  padding:       2px 6px;
+  transition:    background 0.2s;
+}
+.row-actions button:hover {
+  background: var(--cyber-blue-dim, rgba(0,200,255,0.15));
+}
+
+.no-items {
+  text-align: center;
+  padding:    12px;
+  opacity:    0.6;
+  font-size:  12px;
+}
+
+/* ── Mark-as-cyberware header button ────────────────────────────────────── */
+.mark-cyberware-btn.active i { color: var(--cyber-green, #00ff9f); }
+.mark-cyberware-btn:not(.active) i { color: var(--cyber-blue, #00c8ff); }

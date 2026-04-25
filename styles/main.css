@@ -1,0 +1,27 @@
+/* ── cyberware-humanity — main.css ──────────────────────────────────────────
+   Applies minor tweaks that span both the character-sheet and dialog contexts.
+   Heavy theme vars live in cyberpunk-theme.css.
+   Sheet-specific styles live in character-sheet.css.
+   Dialog-specific styles live in dialogs.css.
+   ──────────────────────────────────────────────────────────────────────── */
+
+/* Prevent input spinners from eating layout space on number fields */
+.humanity-track input[type="number"]::-webkit-inner-spin-button,
+.humanity-track input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.humanity-track input[type="number"] { -moz-appearance: textfield; }
+
+/* Ensure our dialogs get a dark look even in light Foundry themes */
+.app.dialog .window-content:has(.cyberware-config-form),
+.app.dialog .window-content:has(.install-dialog),
+.app.dialog .window-content:has(.humanity-manager) {
+  background: var(--cyber-bg, rgba(5, 10, 20, 0.92));
+  color:      var(--cyber-text, #c8e8ff);
+}
+
+/* Dialog button bar matches theme */
+.app.dialog .dialog-buttons .dialog-button {
+  font-family: var(--cyber-font, 'Rajdhani', monospace);
+}

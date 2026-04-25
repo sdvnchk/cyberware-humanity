@@ -1,0 +1,40 @@
+{
+  "id": "cyberware-humanity",
+  "title": "Cyberware & Humanity Manager",
+  "description": "GURPS Cyberpunk module for managing cyberware installation and humanity degradation. Provides calculation tools and GM notifications without forcing automation.",
+  "version": "1.0.0",
+  "authors": [
+    {
+      "name": "Ogorodnik"
+    }
+  ],
+  "compatibility": {
+    "minimum": "12",
+    "verified": "13"
+  },
+  "esmodules": [
+    "scripts/main.js"
+  ],
+  "styles": [
+    "styles/cyberpunk-theme.css",
+    "styles/character-sheet.css",
+    "styles/dialogs.css",
+    "styles/main.css"
+  ],
+  "languages": [
+    {
+      "lang": "en",
+      "name": "English",
+      "path": "lang/en.json"
+    },
+    {
+      "lang": "ru",
+      "name": "Русский",
+      "path": "lang/ru.json"
+    }
+  ],
+  "system": ["gurps"],
+  "url": "https://github.com/sdvnchk/gurps-humanity",
+  "manifest": "https://raw.githubusercontent.com/sdvnchk/gurps-humanity/main/module.json",
+  "download": "https://github.com/sdvnchk/gurps-humanity/releases/latest/download/module.zip"
+}

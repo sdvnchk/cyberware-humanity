@@ -1,0 +1,47 @@
+{{!-- Install dialog template
+  Expected data: actor, implant, humanity, cyberData, will
+--}}
+<div class="install-dialog">
+
+  <div class="install-summary">
+    <h3>{{implant.name}}</h3>
+    <div class="stats-row">
+      <span>{{localize "CYBERWARE.CostDice"}}:
+        <strong>{{cyberData.humanityCostDice}}</strong>
+      </span>
+      <span>{{localize "CYBERWARE.WillValue"}}:
+        <strong>{{will}}</strong>
+      </span>
+    </div>
+    <div class="humanity-preview">
+      <span>{{localize "CYBERWARE.CurrentHumanity"}}:
+        <strong>{{humanity.current}} / {{humanity.currentMax}} ({{humanity.base}})</strong>
+      </span>
+    </div>
+  </div>
+
+  <div class="install-steps">
+
+    <div class="step step-1">
+      <h4>{{localize "CYBERWARE.Step1RollCost"}}</h4>
+      <button class="btn-roll-cost" type="button">
+        <i class="fas fa-dice"></i> {{localize "CYBERWARE.RollCost"}}
+      </button>
+      <div class="cost-result" style="display:none"></div>
+    </div>
+
+    <div class="step step-2">
+      <h4>{{localize "CYBERWARE.Step2RollAdaptation"}}</h4>
+      <button class="btn-roll-adaptation" type="button">
+        <i class="fas fa-brain"></i> {{localize "CYBERWARE.RollAdaptation"}}
+      </button>
+      <div class="adaptation-result" style="display:none"></div>
+    </div>
+
+    <div class="step step-3">
+      <h4>{{localize "CYBERWARE.Step3Apply"}}</h4>
+      <div class="final-preview" style="display:none"></div>
+    </div>
+
+  </div>
+</div>
