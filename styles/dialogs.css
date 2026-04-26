@@ -243,22 +243,6 @@
   line-height: 1;
 }
 
-.manager-thresh-labels {
-  position:   relative;
-  height:     14px;
-  margin-bottom: 4px;
-}
-
-.mgr-label {
-  position:    absolute;
-  transform:   translateX(-50%);
-  font-size:   9px;
-  opacity:     0.55;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  white-space: nowrap;
-  color:       var(--cyber-text, #f0d5d5);
-}
 
 .humanity-manager .manager-status {
   text-align:     center;

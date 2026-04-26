@@ -82,13 +82,31 @@ function injectHumanityTrack(html, actor, humanity) {
       const res = html.find(".ms-resources").first();
       if (res.length) { res.append(trackHtml); inserted = true; }
     }
-  } else {
-    const hpfp = html.find("#hp-fp").first();
-    if (hpfp.length) { hpfp.after(trackHtml); inserted = true; }
-    if (!inserted) {
-      const stats = html.find("#stats").first();
-      if (stats.length) { stats.append(trackHtml); inserted = true; }
+  }
+
+  if (!inserted) {
+    // Classic GCS and other GURPS sheet variants — try progressively broader targets
+    const candidates = [
+      "#hp-fp",
+      "#hitpoints",
+      "#basicattributes",
+      "#attributes",
+      "#stats",
+      ".sheet-header .attributes",
+      ".attribute-list",
+      ".resources",
+      ".primary-attributes",
+    ];
+    for (const sel of candidates) {
+      const el = html.find(sel).first();
+      if (el.length) { el.after(trackHtml); inserted = true; break; }
     }
+  }
+
+  if (!inserted) {
+    // Last resort: before the tab navigation so it appears above tab content
+    const nav = html.find(".sheet-navigation, .tabs, nav.sheet-tabs").first();
+    if (nav.length) { nav.before(trackHtml); inserted = true; }
   }
 
   if (!inserted) {
@@ -100,16 +118,7 @@ function injectHumanityTrack(html, actor, humanity) {
 }
 
 function buildTrackHtml({ current, currentMax, base, pct, maxPct, threshKey, color, actorId, canEdit }) {
-  const threshData = getThresholdData(threshKey);
-  const readOnly   = canEdit ? "" : "readonly disabled";
-
-  const statusIcons = {
-    human:          "🟢",
-    detachment:     "⚠️",
-    dissociation:   "🟠",
-    prePsychosis:   "🔴",
-    cyberpsychosis: "💀"
-  };
+  const readOnly = canEdit ? "" : "readonly disabled";
 
   const markers = [
     { pct: 70, key: "detachment" },
@@ -122,16 +131,6 @@ function buildTrackHtml({ current, currentMax, base, pct, maxPct, threshKey, col
   return `
     <div class="resource-track humanity-track" data-actor-id="${actorId}"
          style="--humanity-color:${color}">
-      <div class="resource-label">
-        <span class="label-text">
-          ${game.i18n.localize("CYBERWARE.Humanity").toUpperCase()}
-        </span>
-        <button class="btn-open-humanity-manager" type="button"
-                title="${game.i18n.localize("CYBERWARE.OpenManager")}">
-          <i class="fas fa-cog"></i>
-        </button>
-      </div>
-
       <div class="resource-values">
         <input type="number"
                name="flags.${MODULE_ID}.humanity.current"
@@ -155,17 +154,16 @@ function buildTrackHtml({ current, currentMax, base, pct, maxPct, threshKey, col
               title="${game.i18n.localize("CYBERWARE.BaseHumanity")} (Will × 5)">
           ${base}
         </span>
+        <button class="btn-open-humanity-manager" type="button"
+                title="${game.i18n.localize("CYBERWARE.OpenManager")}">
+          <i class="fas fa-cog"></i>
+        </button>
       </div>
 
       <div class="humanity-mini-bar">
         <div class="bar-max-fill"  style="width:${maxPct}%"></div>
         <div class="bar-fill"      style="width:${pct}%;background:${color}"></div>
         <div class="threshold-markers">${markers}</div>
-      </div>
-
-      <div class="humanity-status" data-status="${threshKey}">
-        <span class="status-icon">${statusIcons[threshKey] ?? "❓"}</span>
-        <span class="status-text">${game.i18n.localize(threshData.label)}</span>
       </div>
     </div>`;
 }
@@ -176,13 +174,24 @@ function buildTrackHtml({ current, currentMax, base, pct, maxPct, threshKey, col
 function injectTempTraitButtons(html, actor) {
   const traits = getTemporaryTraits(actor);
 
-  // Selectors that map to individual trait name elements in GURPS sheets.
-  // We look for the parent <li> or row element and append the button there.
+  // Selectors that map to individual trait rows in GURPS sheets (list and table variants).
   const rowSelectors = [
-    // Classic GCS sheet
-    "#ads li",  "#disads li",  "#quirks li",
-    // Modern sheet
-    ".adv-item", ".disadv-item", ".perk-item", ".quirk-item"
+    // Classic GCS sheet — list items
+    "#ads li",  "#disads li",  "#quirks li",  "#perks li",
+    // Modern sheet — item elements
+    ".adv-item", ".disadv-item", ".perk-item", ".quirk-item",
+    // Table-based GCS sheets (NAME|OTF|CP|REF layout)
+    "#advantages tbody tr", "#disadvantages tbody tr",
+    "#perks tbody tr", "#quirks tbody tr",
+    "#ads tbody tr", "#disads tbody tr",
+    "table.advtable tbody tr", "table.advantages-table tbody tr",
+    "tr.adv", "tr.disadv", "tr.perk", "tr.quirk",
+    ".advantage-row", ".disadvantage-row"
+  ];
+
+  // Name cell selectors for table rows (checked in order, first match wins)
+  const nameSelectors = [
+    ".item-name", ".adv-name", ".name", "td:first-child", "td.col-name"
   ];
 
   for (const sel of rowSelectors) {
@@ -192,8 +201,12 @@ function injectTempTraitButtons(html, actor) {
       if (row.find(".btn-temp-trait-toggle").length) return;
 
       // Grab name from the first text-bearing child only; skip rows with no clear name.
-      const nameEl  = row.find(".item-name, .adv-name, .name").first();
-      const rawName = nameEl.text().trim().replace(/\s+/g, " ");
+      let nameEl = $();
+      for (const ns of nameSelectors) {
+        nameEl = row.find(ns).first();
+        if (nameEl.length && nameEl.text().trim()) break;
+      }
+      const rawName = nameEl.text().trim().replace(/\s+/g, " ").split("\n")[0];
       if (!rawName) return;
 
       const existingTrait = traits.find(t => t.name === rawName);
@@ -242,15 +255,23 @@ function injectTempTraitButtons(html, actor) {
 // ── Equipment list cyberware buttons ────────────────────────────────────────
 
 function injectEquipmentButtons(html, actor) {
-  // Selectors covering Classic GCS and Modern GURPS sheet equipment rows
+  // Selectors covering Classic GCS, Modern, and table-based GURPS sheet equipment rows
   const rowSelectors = [
     "#equipment tbody tr",
     "#carried-equipment tbody tr",
     "#other-equipment tbody tr",
     "table.eqtable tbody tr",
+    "table.equipment-table tbody tr",
+    "#eqt tbody tr",
+    "tr.eqt",
+    "tr.eqt-row",
     ".equipment-item",
     ".eqt-item",
-    "[data-item-id]"
+  ];
+
+  // Name cell candidates — the Э|КОЛ.|СНАРЯЖЕНИЕ layout has name in 3rd column
+  const nameCellSelectors = [
+    ".eqt-name", ".item-name", "td:nth-child(3)", "td:nth-child(2)", "td:first-child"
   ];
 
   for (const sel of rowSelectors) {
@@ -260,11 +281,17 @@ function injectEquipmentButtons(html, actor) {
 
       // Try data-item-id first (modern sheet), then name matching (classic)
       let item = null;
-      const itemId = row.data("item-id") ?? row.data("itemId");
+      const itemId = row.data("item-id") ?? row.data("itemId") ?? row.data("key");
       if (itemId) {
         item = actor.items.get(String(itemId));
-      } else {
-        const nameEl  = row.find(".eqt-name, .item-name, td:nth-child(2)").first();
+      }
+
+      if (!item) {
+        let nameEl = $();
+        for (const ns of nameCellSelectors) {
+          nameEl = row.find(ns).first();
+          if (nameEl.length && nameEl.text().trim()) break;
+        }
         const rawName = nameEl.text().trim().replace(/\s+/g, " ").split("\n")[0];
         if (!rawName) return;
         item = actor.items.find(i => i.name === rawName);
@@ -285,8 +312,12 @@ function injectEquipmentButtons(html, actor) {
           <i class="fas ${isCyber ? "fa-cog" : "fa-robot"}"></i>
         </button>`);
 
-      // Insert after the name cell, or append to row
-      const nameCell = row.find(".eqt-name, .item-name, td:nth-child(2)").first();
+      // Insert into the name cell or append to row
+      let nameCell = $();
+      for (const ns of nameCellSelectors) {
+        nameCell = row.find(ns).first();
+        if (nameCell.length) break;
+      }
       if (nameCell.length) {
         nameCell.append(btn);
       } else {
@@ -392,11 +423,6 @@ export function openHumanityManager(actor) {
           </div>
         </div>
         <span class="manager-pct" style="color:${threshData.color}">${pct}%</span>
-      </div>
-      <div class="manager-thresh-labels">
-        <span class="mgr-label" style="left:70%">${game.i18n.localize("CYBERWARE.Threshold.detachment")}</span>
-        <span class="mgr-label" style="left:40%">${game.i18n.localize("CYBERWARE.Threshold.dissociation")}</span>
-        <span class="mgr-label" style="left:25%">${game.i18n.localize("CYBERWARE.Threshold.prePsychosis")}</span>
       </div>
       <div class="manager-status" data-status="${threshKey}">${game.i18n.localize(threshData.label)}</div>
     </div>`;
