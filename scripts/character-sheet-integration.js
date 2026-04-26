@@ -5,7 +5,7 @@ import {
   ensureHumanityFlags
 }                                                   from "./utils.js";
 import { openInstallDialog }                        from "./installation.js";
-import { openCyberwareConfig }                      from "./cyberware.js";
+import { markAsCyberware, openCyberwareConfig }     from "./cyberware.js";
 import { uninstallImplant }                         from "./humanity.js";
 import { checkThresholdCrossing }                   from "./thresholds.js";
 import { canDo }                                    from "./permissions.js";
@@ -52,6 +52,7 @@ async function onRenderActorSheet(app, html, _data) {
 
   injectHumanityTrack(html, actor, humanity);
   injectTempTraitButtons(html, actor);
+  injectEquipmentButtons(html, actor);
 }
 
 // ── Track injection ──────────────────────────────────────────────────────────
@@ -201,24 +202,112 @@ function injectTempTraitButtons(html, actor) {
         ? game.i18n.localize("CYBERWARE.TempTrait.EditTooltip")
         : game.i18n.localize("CYBERWARE.TempTrait.AddTooltip");
 
-      const btn = $(`
-        <button class="btn-temp-trait-toggle ${isTemp ? "is-temp" : ""}"
-                type="button"
-                title="${title}"
-                data-trait-name="${rawName.replace(/"/g, "&quot;")}">
-          <i class="fas ${isTemp ? "fa-clock" : "fa-plus-circle"}"></i>
-        </button>`);
+      let timerDisplay = "";
+      if (isTemp && existingTrait) {
+        if (existingTrait.daysRemaining === null) {
+          timerDisplay = `<span class="cyber-timer-value perm">∞</span>`;
+        } else if (existingTrait.daysRemaining <= 0) {
+          timerDisplay = `<span class="cyber-timer-value expired">!</span>`;
+        } else {
+          timerDisplay = `<span class="cyber-timer-value">${existingTrait.daysRemaining}d</span>`;
+        }
+      }
 
-      row.append(btn);
+      const wrap = $(`
+        <span class="cyber-trait-timer${isTemp ? " is-tracked" : ""}">
+          <button class="btn-temp-trait-toggle${isTemp ? " is-temp" : ""}"
+                  type="button"
+                  title="${title}"
+                  data-trait-name="${rawName.replace(/"/g, "&quot;")}">
+            <i class="fas fa-clock"></i>
+          </button>
+          ${timerDisplay}
+        </span>`);
 
-      btn.on("click", (e) => {
+      row.append(wrap);
+
+      wrap.find(".btn-temp-trait-toggle").on("click", (e) => {
         e.preventDefault();
         e.stopPropagation();
         if (existingTrait) {
           openEditTempTraitDialog(actor, existingTrait, _refreshManager);
         } else {
-          // Sheet re-renders automatically when actor data changes, so no manual re-inject needed.
           openAddTempTraitDialog(actor, rawName, _refreshManager);
+        }
+      });
+    });
+  }
+}
+
+// ── Equipment list cyberware buttons ────────────────────────────────────────
+
+function injectEquipmentButtons(html, actor) {
+  // Selectors covering Classic GCS and Modern GURPS sheet equipment rows
+  const rowSelectors = [
+    "#equipment tbody tr",
+    "#carried-equipment tbody tr",
+    "#other-equipment tbody tr",
+    "table.eqtable tbody tr",
+    ".equipment-item",
+    ".eqt-item",
+    "[data-item-id]"
+  ];
+
+  for (const sel of rowSelectors) {
+    html.find(sel).each(function () {
+      const row = $(this);
+      if (row.find(".btn-mark-equipment").length) return;
+
+      // Try data-item-id first (modern sheet), then name matching (classic)
+      let item = null;
+      const itemId = row.data("item-id") ?? row.data("itemId");
+      if (itemId) {
+        item = actor.items.get(String(itemId));
+      } else {
+        const nameEl  = row.find(".eqt-name, .item-name, td:nth-child(2)").first();
+        const rawName = nameEl.text().trim().replace(/\s+/g, " ").split("\n")[0];
+        if (!rawName) return;
+        item = actor.items.find(i => i.name === rawName);
+      }
+
+      if (!item) return;
+
+      const isCyber = Boolean(item.flags?.[MODULE_ID]?.isCyberware);
+      const title   = isCyber
+        ? game.i18n.localize("CYBERWARE.ConfigureCyberware")
+        : game.i18n.localize("CYBERWARE.MarkAsCyberware");
+
+      const btn = $(`
+        <button class="btn-mark-equipment${isCyber ? " is-cyber" : ""}"
+                type="button"
+                data-item-id="${item.id}"
+                title="${title}">
+          <i class="fas ${isCyber ? "fa-cog" : "fa-robot"}"></i>
+        </button>`);
+
+      // Insert after the name cell, or append to row
+      const nameCell = row.find(".eqt-name, .item-name, td:nth-child(2)").first();
+      if (nameCell.length) {
+        nameCell.append(btn);
+      } else {
+        row.append(btn);
+      }
+
+      btn.on("click", async (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        if (isCyber) {
+          if (!canDo("permConfigCyberware")) {
+            ui.notifications.warn(game.i18n.localize("CYBERWARE.PermissionDenied"));
+            return;
+          }
+          openCyberwareConfig(item);
+        } else {
+          if (!canDo("permMarkCyberware")) {
+            ui.notifications.warn(game.i18n.localize("CYBERWARE.PermissionDenied"));
+            return;
+          }
+          await markAsCyberware(item);
         }
       });
     });
@@ -266,7 +355,6 @@ export function openHumanityManager(actor) {
   _managerActor = actor;
 
   const cyberItems  = actor.items.filter(i => i.flags?.[MODULE_ID]?.isCyberware);
-  const tempTraits  = getTemporaryTraits(actor);
   const base        = humanity.base;
   const pct         = base > 0 ? Math.round((humanity.current / base) * 100) : 0;
   const threshKey   = getThresholdForValue(humanity.current, base);
@@ -290,62 +378,27 @@ export function openHumanityManager(actor) {
           <span class="ov-label">${game.i18n.localize("CYBERWARE.Current")}</span>
           <span class="ov-number" style="color:${threshData.color}">${humanity.current}</span>
         </div>
-        <div class="ov-val">
-          <span class="ov-label">%</span>
-          <span class="ov-number" style="color:${threshData.color}">${pct}%</span>
-        </div>
       </div>
-      <div class="manager-bar">
-        <div class="bar-fill" style="width:${pct}%;background:${threshData.color}"></div>
+      <div class="manager-bar-row">
+        <div class="manager-bar">
+          <div class="bar-fill" style="width:${pct}%;background:${threshData.color}"></div>
+          <div class="manager-thresh-markers">
+            <span class="mgr-marker" style="left:70%"
+                  title="${game.i18n.localize("CYBERWARE.Threshold.detachment")}"></span>
+            <span class="mgr-marker" style="left:40%"
+                  title="${game.i18n.localize("CYBERWARE.Threshold.dissociation")}"></span>
+            <span class="mgr-marker" style="left:25%"
+                  title="${game.i18n.localize("CYBERWARE.Threshold.prePsychosis")}"></span>
+          </div>
+        </div>
+        <span class="manager-pct" style="color:${threshData.color}">${pct}%</span>
+      </div>
+      <div class="manager-thresh-labels">
+        <span class="mgr-label" style="left:70%">${game.i18n.localize("CYBERWARE.Threshold.detachment")}</span>
+        <span class="mgr-label" style="left:40%">${game.i18n.localize("CYBERWARE.Threshold.dissociation")}</span>
+        <span class="mgr-label" style="left:25%">${game.i18n.localize("CYBERWARE.Threshold.prePsychosis")}</span>
       </div>
       <div class="manager-status" data-status="${threshKey}">${game.i18n.localize(threshData.label)}</div>
-      <div class="manager-recovery-row">
-        <button class="btn-recovery btn-therapy" type="button">
-          <i class="fas fa-hospital-alt"></i> ${game.i18n.localize("CYBERWARE.RecoveryTherapy")}
-        </button>
-        <button class="btn-recovery btn-heroism" type="button">
-          <i class="fas fa-fist-raised"></i> ${game.i18n.localize("CYBERWARE.RecoveryHeroism")}
-        </button>
-      </div>
-    </div>`;
-
-  // ── Temporary Traits panel ───────────────────────────────────────────────────
-  const traitRowsHtml = tempTraits.length
-    ? tempTraits.map(t => {
-        const expired  = t.daysRemaining !== null && t.daysRemaining <= 0;
-        const dayLabel = t.daysRemaining === null
-          ? `<span class="trait-perm">${game.i18n.localize("CYBERWARE.TempTrait.Permanent")}</span>`
-          : expired
-            ? `<span class="trait-days expired">${game.i18n.localize("CYBERWARE.TempTrait.Expired")}</span>`
-            : `<span class="trait-days">${t.daysRemaining}d</span>`;
-        return `
-          <div class="temp-trait-row ${expired ? "expired" : ""}" data-trait-id="${t.id}">
-            ${dayLabel}
-            <span class="trait-name" title="${(t.source ?? "").replace(/"/g, "&quot;")}">${t.name}</span>
-            <div class="trait-actions">
-              <button class="btn-edit-trait" data-trait-id="${t.id}" type="button"
-                      title="${game.i18n.localize("CYBERWARE.TempTrait.EditTooltip")}">
-                <i class="fas fa-pencil-alt"></i>
-              </button>
-              <button class="btn-remove-trait" data-trait-id="${t.id}" type="button"
-                      title="${game.i18n.localize("CYBERWARE.TempTrait.Remove")}">
-                <i class="fas fa-times"></i>
-              </button>
-            </div>
-          </div>`;
-      }).join("")
-    : `<div class="no-temp-traits"><em>${game.i18n.localize("CYBERWARE.TempTrait.NoTraits")}</em></div>`;
-
-  const tempTraitsHtml = `
-    <div class="temp-traits-section">
-      <div class="section-header">
-        <h3>${game.i18n.localize("CYBERWARE.TempTraits")}</h3>
-        <button class="btn-add-temp-trait" type="button"
-                title="${game.i18n.localize("CYBERWARE.TempTrait.AddTooltip")}">
-          <i class="fas fa-plus"></i>
-        </button>
-      </div>
-      <div class="temp-traits-list">${traitRowsHtml}</div>
     </div>`;
 
   // ── Cyberware table ──────────────────────────────────────────────────────────
@@ -401,7 +454,6 @@ export function openHumanityManager(actor) {
   const content = `
     <div class="humanity-manager">
       ${overviewHtml}
-      ${tempTraitsHtml}
       ${cyberTableHtml}
     </div>`;
 
@@ -411,7 +463,7 @@ export function openHumanityManager(actor) {
     buttons: {
       close: {
         icon:  '<i class="fas fa-times"></i>',
-        label: game.i18n.localize("Close")
+        label: game.i18n.localize("Close") || "Закрыть"
       }
     },
     default: "close",
@@ -424,46 +476,6 @@ export function openHumanityManager(actor) {
 // ── Manager event wiring ─────────────────────────────────────────────────────
 
 function _wireManagerEvents(html, actor) {
-  // Recovery buttons
-  html.find(".btn-therapy").on("click", async () => {
-    const h = getActorHumanity(game.actors.get(actor.id));
-    if (!h) return;
-    const roll = await new Roll("1d6").evaluate();
-    await roll.toMessage({ flavor: "Therapy Recovery", speaker: ChatMessage.getSpeaker({ actor }) });
-    const newVal = Math.min(h.currentMax, h.current + roll.total);
-    await actor.update({ [`flags.${MODULE_ID}.humanity.current`]: newVal });
-    ui.notifications.info(`${actor.name}: +${roll.total} Humanity (${h.current} → ${newVal})`);
-    _refreshManager();
-  });
-
-  html.find(".btn-heroism").on("click", async () => {
-    const h = getActorHumanity(game.actors.get(actor.id));
-    if (!h) return;
-    const roll = await new Roll("1d3").evaluate();
-    await roll.toMessage({ flavor: "Heroism Recovery", speaker: ChatMessage.getSpeaker({ actor }) });
-    const newVal = Math.min(h.currentMax, h.current + roll.total);
-    await actor.update({ [`flags.${MODULE_ID}.humanity.current`]: newVal });
-    ui.notifications.info(`${actor.name}: +${roll.total} Humanity (${h.current} → ${newVal})`);
-    _refreshManager();
-  });
-
-  // Temp trait buttons
-  html.find(".btn-add-temp-trait").on("click", () => {
-    openAddTempTraitDialog(actor, "", _refreshManager);
-  });
-
-  html.find(".btn-edit-trait").on("click", (e) => {
-    const traitId = e.currentTarget.dataset.traitId;
-    const trait   = getTemporaryTraits(actor).find(t => t.id === traitId);
-    if (trait) openEditTempTraitDialog(actor, trait, _refreshManager);
-  });
-
-  html.find(".btn-remove-trait").on("click", async (e) => {
-    const traitId = e.currentTarget.dataset.traitId;
-    await removeTemporaryTrait(actor, traitId);
-    _refreshManager();
-  });
-
   // Cyberware table buttons
   html.find(".btn-install-item").on("click", async (e) => {
     if (!canDo("permInstallImplant")) {

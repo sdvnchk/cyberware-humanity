@@ -1,16 +1,16 @@
 /* ── Cyberpunk theme variables ──────────────────────────────────────────── */
 :root {
-  --cyber-blue:      #00c8ff;
-  --cyber-blue-dim:  rgba(0, 200, 255, 0.15);
+  --cyber-blue:      #cc1a1a;
+  --cyber-blue-dim:  rgba(180, 0, 0, 0.15);
   --cyber-green:     #00ff9f;
   --cyber-red:       #ff0040;
   --cyber-orange:    #ff6600;
   --cyber-yellow:    #ffed4e;
   --cyber-dark-red:  #8B0000;
-  --cyber-bg:        rgba(5, 10, 20, 0.85);
-  --cyber-panel:     rgba(0, 20, 40, 0.8);
-  --cyber-border:    rgba(0, 200, 255, 0.4);
-  --cyber-text:      #c8e8ff;
+  --cyber-bg:        rgba(15, 3, 3, 0.92);
+  --cyber-panel:     rgba(22, 4, 4, 0.85);
+  --cyber-border:    rgba(160, 20, 20, 0.45);
+  --cyber-text:      #f0d5d5;
   --cyber-font:      'Rajdhani', 'Orbitron', monospace;
 }
 
@@ -47,4 +47,4 @@
 }
 
 .adaptation-failure { border-left: 4px solid var(--cyber-red) !important; }
-.threshold-notification { border-left: 4px solid var(--cyber-blue) !important; }
+.threshold-notification { border-left: 4px solid var(--cyber-red) !important; }

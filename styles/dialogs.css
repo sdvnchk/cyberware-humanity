@@ -195,17 +195,69 @@
 .ov-label  { font-size: 10px; text-transform: uppercase; letter-spacing: 1px; opacity: 0.6; }
 .ov-number { font-size: 20px; font-weight: 700; line-height: 1; }
 
+.manager-bar-row {
+  display:     flex;
+  align-items: center;
+  gap:         8px;
+  margin-bottom: 4px;
+}
+
 .humanity-manager .manager-bar {
-  height:     10px;
-  background: rgba(0,0,0,0.4);
-  border:     1px solid var(--cyber-border, rgba(0,200,255,0.3));
+  flex:         1;
+  height:       10px;
+  background:   rgba(0,0,0,0.4);
+  border:       1px solid var(--cyber-border, rgba(160,20,20,0.3));
   border-radius: 3px;
-  overflow:   hidden;
-  margin-bottom: 6px;
+  position:     relative;
+  overflow:     visible;
+  margin-bottom: 0;
 }
 .humanity-manager .manager-bar .bar-fill {
   height: 100%;
   transition: width 0.4s, background 0.4s;
+  border-radius: 2px;
+}
+
+.manager-thresh-markers {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  pointer-events: none;
+}
+
+.mgr-marker {
+  position:   absolute;
+  top:        -2px;
+  display:    block;
+  width:      2px;
+  height:     calc(100% + 4px);
+  background: rgba(255,255,255,0.5);
+}
+
+.manager-pct {
+  font-size:  15px;
+  font-weight: 700;
+  min-width:  44px;
+  text-align: right;
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+.manager-thresh-labels {
+  position:   relative;
+  height:     14px;
+  margin-bottom: 4px;
+}
+
+.mgr-label {
+  position:    absolute;
+  transform:   translateX(-50%);
+  font-size:   9px;
+  opacity:     0.55;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+  color:       var(--cyber-text, #f0d5d5);
 }
 
 .humanity-manager .manager-status {
@@ -467,6 +519,22 @@
   cursor:      pointer;
 }
 
+/* ── Equipment list cyberware button ─────────────────────────────────────── */
+.btn-mark-equipment {
+  background:    transparent;
+  border:        none;
+  cursor:        pointer;
+  color:         rgba(180, 20, 20, 0.45);
+  font-size:     12px;
+  padding:       0 3px;
+  line-height:   1;
+  vertical-align: middle;
+  transition:    color 0.15s;
+}
+.btn-mark-equipment:hover        { color: var(--cyber-blue, #cc1a1a); }
+.btn-mark-equipment.is-cyber     { color: var(--cyber-green, #00ff9f); }
+.btn-mark-equipment.is-cyber:hover { color: var(--cyber-yellow, #ffed4e); }
+
 /* ── Uninstall dialog ────────────────────────────────────────────────────── */
 .uninstall-dialog .restore-hint {
   font-size: 12px;
@@ -475,16 +543,33 @@
   color:     var(--cyber-green, #00ff9f);
 }
 
-/* ── Temp-trait sheet button ─────────────────────────────────────────────── */
+/* ── Temp-trait sheet button + inline timer ──────────────────────────────── */
+.cyber-trait-timer {
+  display:     inline-flex;
+  align-items: center;
+  gap:         2px;
+  margin-left: 3px;
+  vertical-align: middle;
+}
+
 .btn-temp-trait-toggle {
   background:    transparent;
   border:        none;
   cursor:        pointer;
-  color:         rgba(0,200,255,0.4);
+  color:         rgba(180, 20, 20, 0.45);
   font-size:     11px;
-  padding:       0 3px;
+  padding:       0 2px;
   line-height:   1;
   transition:    color 0.15s;
 }
-.btn-temp-trait-toggle:hover,
+.btn-temp-trait-toggle:hover   { color: var(--cyber-blue, #cc1a1a); }
 .btn-temp-trait-toggle.is-temp { color: var(--cyber-yellow, #ffed4e); }
+
+.cyber-timer-value {
+  font-size:   10px;
+  font-weight: 700;
+  color:       var(--cyber-yellow, #ffed4e);
+  min-width:   18px;
+}
+.cyber-timer-value.perm    { color: var(--cyber-blue, #cc1a1a); }
+.cyber-timer-value.expired { color: var(--cyber-red, #ff0040); }
