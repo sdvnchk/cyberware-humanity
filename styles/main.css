@@ -17,11 +17,14 @@
 .app.dialog .window-content:has(.cyberware-config-form),
 .app.dialog .window-content:has(.install-dialog),
 .app.dialog .window-content:has(.humanity-manager) {
-  background: var(--cyber-bg, rgba(5, 10, 20, 0.92));
-  color:      var(--cyber-text, #c8e8ff);
+  background: var(--cyber-bg, rgba(15, 3, 3, 0.92));
+  color:      var(--cyber-text, #f0d5d5);
 }
 
 /* Dialog button bar matches theme */
 .app.dialog .dialog-buttons .dialog-button {
-  font-family: var(--cyber-font, 'Rajdhani', monospace);
+  font-family:  var(--cyber-font, 'Rajdhani', monospace);
+  color:        var(--cyber-text, #f0d5d5) !important;
+  background:   rgba(30, 5, 5, 0.7);
+  border-color: var(--cyber-border, rgba(160,20,20,0.45));
 }
