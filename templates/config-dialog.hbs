@@ -4,7 +4,7 @@
 <form class="cyberware-config-form">
 
   <div class="form-group">
-    <label>{{localize "CYBERWARE.Category"}}</label>
+    <label>{{localize "CYBERWARE.CategoryLabel"}}</label>
     <select name="category">
       {{#each categoryOptions}}
         <option value="{{value}}" {{#if selected}}selected{{/if}}>{{label}}</option>
@@ -13,7 +13,7 @@
   </div>
 
   <div class="form-group">
-    <label>{{localize "CYBERWARE.Slot"}}</label>
+    <label>{{localize "CYBERWARE.SlotLabel"}}</label>
     <select name="slot">
       {{#each slotOptions}}
         <option value="{{value}}" {{#if selected}}selected{{/if}}>{{label}}</option>
@@ -31,7 +31,7 @@
   </div>
 
   <div class="form-group">
-    <label>{{localize "CYBERWARE.CraftQuality"}}</label>
+    <label>{{localize "CYBERWARE.CraftQualityLabel"}}</label>
     <select name="craftQuality">
       {{#each qualityOptions}}
         <option value="{{value}}" {{#if selected}}selected{{/if}}>{{label}}</option>

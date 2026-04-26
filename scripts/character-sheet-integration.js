@@ -388,7 +388,7 @@ export function openHumanityManager(actor) {
         <thead>
           <tr>
             <th>${game.i18n.localize("CYBERWARE.Name")}</th>
-            <th>${game.i18n.localize("CYBERWARE.Slot")}</th>
+            <th>${game.i18n.localize("CYBERWARE.SlotLabel")}</th>
             <th>${game.i18n.localize("CYBERWARE.Cost")}</th>
             <th>${game.i18n.localize("CYBERWARE.Installed")}</th>
             <th></th>

@@ -37,12 +37,12 @@ export async function openCyberwareConfig(item) {
   const content = `
     <form class="cyberware-config-form">
       <div class="form-group">
-        <label>${game.i18n.localize("CYBERWARE.Category")}</label>
+        <label>${game.i18n.localize("CYBERWARE.CategoryLabel")}</label>
         <select name="category">${categoryOptions}</select>
       </div>
 
       <div class="form-group">
-        <label>${game.i18n.localize("CYBERWARE.Slot")}</label>
+        <label>${game.i18n.localize("CYBERWARE.SlotLabel")}</label>
         <select name="slot">${slotOptions}</select>
       </div>
 
@@ -55,7 +55,7 @@ export async function openCyberwareConfig(item) {
       </div>
 
       <div class="form-group">
-        <label>${game.i18n.localize("CYBERWARE.CraftQuality")}</label>
+        <label>${game.i18n.localize("CYBERWARE.CraftQualityLabel")}</label>
         <select name="craftQuality">${qualityOptions}</select>
       </div>
 
