@@ -30,7 +30,7 @@ export async function openCyberwareConfig(item) {
       ? `, ${v.malfunctionMod > 0 ? "+" : ""}${v.malfunctionMod} malf`
       : "";
     return `<option value="${k}" ${data.craftQuality === k ? "selected" : ""}>
-              ${v.label} (×${v.costMult}${modStr})
+              ${game.i18n.localize(v.label)} (×${v.costMult}${modStr})
             </option>`;
   }).join("");
 
